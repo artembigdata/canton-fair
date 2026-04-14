@@ -310,8 +310,10 @@ select:focus{outline:none}
           <button class="btn btn-teal" onclick="saveBackup()">💾 Сохранить копию</button>
           <button class="btn" onclick="document.getElementById('load-inp').click()">📂 Загрузить копию</button>
           <input type="file" id="load-inp" accept=".json" style="display:none" onchange="loadBackup(event)"/>
+          <button class="btn" id="btn-clear-photos" onclick="clearPhotos()" title="Удалить фото из браузера после синхронизации с Drive">🗑 Очистить фото</button>
         </div>
         <div class="sync-info" id="backup-info">Копия ещё не сохранялась</div>
+        <div class="sync-info" id="clear-photos-info" style="margin-top:4px"></div>
       </div>
 
       <!-- COL 2: Drive sync -->
@@ -881,7 +883,36 @@ async function driveLoad(){
   }catch(e){setProgress('',0,false);console.error(e);toast('Ошибка: '+e.message);}
 }
 
-/* ============================================================ CSV */
+/* ============================================================ CLEAR PHOTOS */
+function clearPhotos(){
+  const allPhotos=sup.flatMap(s=>s.photos||[]);
+  const total=allPhotos.length;
+  if(!total){toast('Фото нет — нечего удалять');return;}
+
+  const synced=allPhotos.filter(p=>p.driveId&&p.data).length;
+  const unsynced=allPhotos.filter(p=>!p.driveId&&p.data).length;
+
+  let msg=`Фото в браузере: ${total} шт.\n`;
+  if(synced>0) msg+=`✓ Загружено на Drive: ${synced} шт. — можно удалить\n`;
+  if(unsynced>0) msg+=`⚠ НЕ загружено на Drive: ${unsynced} шт. — будут потеряны!\n`;
+  msg+='\nУдалить фото из браузера?';
+
+  if(!confirm(msg))return;
+
+  let cleared=0;
+  sup.forEach(s=>{
+    (s.photos||[]).forEach(p=>{
+      if(p.data){p.data='';cleared++;}
+    });
+  });
+  lsSave();render();
+  const info=document.getElementById('clear-photos-info');
+  info.textContent=`🗑 Удалено ${cleared} фото из браузера — на Drive они сохранены`;
+  info.style.color='var(--teal-tx)';
+  toast(`✓ Удалено ${cleared} фото из браузера`);
+}
+
+
 function buildCSV(){
   const rows=[['Название','Стенд','Категория','Статус','Контакт','Заметки','Лог (кол-во)','Фото']];
   sup.forEach(s=>rows.push([s.name,s.stand,s.cat,SL[s.status],s.contact||'',s.generalNotes||'',(s.log||[]).length,(s.photos||[]).length]));
