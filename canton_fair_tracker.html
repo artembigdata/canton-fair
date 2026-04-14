@@ -547,8 +547,10 @@ function render(){
     if(gn.trim())prev+=`<div class="notes-general-preview" onclick="openNotes(${s.id})">${esc(gn.trim().split('\n').slice(0,2).join('\n'))}</div>`;
     if(log.length)prev+=`<div class="log-preview">${log.slice(-2).reverse().map(l=>`<div class="log-entry-preview" onclick="openNotes(${s.id})"><span class="log-time-preview">${fmt(l.ts)}</span><span class="log-text-preview">${esc(l.text)}</span></div>`).join('')}</div>`;
     if(prev)prev+=`<span class="notes-more" onclick="openNotes(${s.id})">Все заметки →</span>`;
-    const phHtml=ph.map((p,i)=>`<div class="thumb-wrap" onclick="viewPhoto(${s.id},${i})"><img src="${p.data}" alt="фото"/><div class="thumb-label">${PT[p.type]||'Фото'}</div>${p.driveId?'<div class="thumb-synced">✓</div>':''}<div class="thumb-del" onclick="event.stopPropagation();delPhoto(${s.id},${i})">×</div></div>`).join('')+
-      `<button class="add-photo-btn" onclick="openPhoto(${s.id})"><span style="font-size:18px">📷</span>Фото</button>`;
+    const phHtml=ph.map((p,i)=>{
+      if(!p.data&&p.driveId)return`<div class="thumb-wrap" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:default"><span style="font-size:18px">☁</span><span style="font-size:9px;color:var(--text3)">На Drive</span><div class="thumb-del" onclick="event.stopPropagation();delPhoto(${s.id},${i})">×</div></div>`;
+      return`<div class="thumb-wrap" onclick="viewPhoto(${s.id},${i})"><img src="${p.data}" alt="фото"/><div class="thumb-label">${PT[p.type]||'Фото'}</div>${p.driveId?'<div class="thumb-synced">✓</div>':''}<div class="thumb-del" onclick="event.stopPropagation();delPhoto(${s.id},${i})">×</div></div>`;
+    }).join('')+`<button class="add-photo-btn" onclick="openPhoto(${s.id})"><span style="font-size:18px">📷</span>Фото</button>`;
     return `<div class="card s-${s.status}">
       <div class="card-main">
         <div class="crow1">
