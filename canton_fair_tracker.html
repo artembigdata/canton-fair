@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canton Fair 2026 — Трекер поставщиков</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f3;--surface:#fff;--surface2:#f1f0ec;--surface3:#e8e7e2;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.16);
+  --text:#1a1a18;--text2:#6b6a64;--text3:#a0a09a;
+  --amber-bg:#faeeda;--amber-tx:#7a4800;
+  --blue-bg:#e4eefb;--blue-tx:#144f99;
+  --green-bg:#e8f3db;--green-tx:#2e6010;
+  --gray-bg:#eeede8;--gray-tx:#555450;
+  --red-bg:#fce8e8;--red-tx:#992222;
+  --teal-bg:#e1f5ee;--teal-tx:#0f6e56;
+  --purple-bg:#eeedfe;--purple-tx:#534ab7;
+  --r:10px;--rs:6px
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1917;--surface:#242320;--surface2:#2e2d2a;--surface3:#3a3935;
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.16);
+  --text:#f0ede6;--text2:#9e9c95;--text3:#6b6963;
+  --amber-bg:#3d2900;--amber-tx:#f5c060;
+  --blue-bg:#0d2a4a;--blue-tx:#7ab8f5;
+  --green-bg:#162a08;--green-tx:#90cc55;
+  --gray-bg:#2a2926;--gray-tx:#b0aea7;
+  --red-bg:#3a0f0f;--red-tx:#f08080;
+  --teal-bg:#04342c;--teal-tx:#5dcaa5;
+  --purple-bg:#26215c;--purple-tx:#afa9ec
+}}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
+
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:11px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px}
+.logo{font-size:17px;font-weight:600;letter-spacing:-.4px;white-space:nowrap}
+.logo span{color:var(--text2);font-weight:400}
+.phase{font-size:11px;background:var(--amber-bg);color:var(--amber-tx);padding:3px 8px;border-radius:20px;font-weight:500;margin-left:8px;white-space:nowrap}
+.hdr-right{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.drive-pill{font-size:11px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.drive-pill.on{background:var(--teal-bg);color:var(--teal-tx)}
+.drive-pill.off{background:var(--surface2);color:var(--text3)}
+.drive-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+.btn{font-size:12px;padding:6px 11px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;transition:background .12s;white-space:nowrap}
+.btn:hover{background:var(--surface2)}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-primary:hover{opacity:.85}
+.btn-danger{background:var(--red-bg);color:var(--red-tx);border-color:transparent}
+.btn-teal{background:var(--teal-bg);color:var(--teal-tx);border-color:transparent}
+.btn-purple{background:var(--purple-bg);color:var(--purple-tx);border-color:transparent}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+main{max-width:960px;margin:0 auto;padding:16px 14px 80px}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px}
+.stat-n{font-size:24px;font-weight:600;letter-spacing:-1px;line-height:1}
+.stat-l{font-size:11px;color:var(--text2);margin-top:2px}
+.s-hot .stat-n{color:var(--amber-tx)}.s-smp .stat-n{color:var(--blue-tx)}.s-pas .stat-n{color:var(--text3)}
+
+.toolbar{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
+.srch{flex:1;min-width:180px;position:relative}
+.srch svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);opacity:.35;pointer-events:none}
+.srch input{width:100%;padding:7px 10px 7px 30px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px;font-family:inherit}
+.srch input:focus{outline:none;border-color:var(--text3)}
+select{padding:7px 9px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer}
+select:focus{outline:none}
+
+.supplier-list{display:flex;flex-direction:column;gap:7px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .12s}
+.card:hover{border-color:var(--border2)}
+.card.s-hot{border-left:3px solid #e09a20}
+.card.s-sample{border-left:3px solid #3a7cd5}
+.card.s-pass{opacity:.5}
+.card-main{padding:11px 13px;display:flex;flex-direction:column;gap:8px}
+.crow1{display:flex;align-items:flex-start;gap:9px}
+.cicon{width:33px;height:33px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.cmeta{flex:1;min-width:0}
+.cname{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.csub{font-size:12px;color:var(--text2);margin-top:1px}
+.cright{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.cstand{font-size:11px;color:var(--text3);font-family:monospace}
+.ccontact{font-size:11px;color:var(--text2)}
+.badge{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500;cursor:pointer;white-space:nowrap;user-select:none}
+.badge:hover{opacity:.8}
+.b-hot{background:var(--amber-bg);color:var(--amber-tx)}
+.b-sample{background:var(--blue-bg);color:var(--blue-tx)}
+.b-new{background:var(--green-bg);color:var(--green-tx)}
+.b-pass{background:var(--gray-bg);color:var(--gray-tx)}
+.crow-actions{display:flex;gap:6px;align-items:center}
+.crow-actions input{flex:1;min-width:0;font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);color:var(--text);font-family:inherit}
+.crow-actions input:focus{outline:none;border-color:var(--text3)}
+.crow-actions input::placeholder{color:var(--text3)}
+.icon-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .12s;flex-shrink:0;position:relative}
+.icon-btn:hover{background:var(--surface3);color:var(--text)}
+.icon-btn.del:hover{background:var(--red-bg);color:var(--red-tx);border-color:transparent}
+.note-count{position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:var(--blue-tx);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:600}
+
+.card-notes-preview{padding:0 13px 10px;display:flex;flex-direction:column;gap:4px}
+.notes-general-preview{font-size:12px;color:var(--text2);background:var(--surface2);border-radius:var(--rs);padding:7px 10px;white-space:pre-wrap;line-height:1.5;max-height:52px;overflow:hidden;cursor:pointer}
+.notes-general-preview:hover{background:var(--surface3)}
+.log-preview{display:flex;flex-direction:column;gap:2px}
+.log-entry-preview{display:flex;gap:7px;font-size:12px;cursor:pointer}
+.log-time-preview{color:var(--text3);white-space:nowrap;flex-shrink:0;font-size:11px;margin-top:1px;min-width:86px}
+.log-text-preview{color:var(--text2);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.notes-more{font-size:11px;color:var(--blue-tx);cursor:pointer}
+
+.photos-row{display:flex;gap:6px;flex-wrap:wrap;padding:0 13px 11px}
+.thumb-wrap{position:relative;width:68px;height:68px;border-radius:var(--rs);overflow:hidden;border:1px solid var(--border);cursor:pointer;background:var(--surface2)}
+.thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-label{position:absolute;bottom:0;left:0;right:0;font-size:9px;background:rgba(0,0,0,.55);color:#fff;text-align:center;padding:2px 0;line-height:1.4}
+.thumb-synced{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:rgba(15,110,86,.9);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center}
+.thumb-del{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .15s}
+.thumb-wrap:hover .thumb-del{opacity:1}
+.add-photo-btn{width:68px;height:68px;border-radius:var(--rs);border:1px dashed var(--border2);background:transparent;color:var(--text3);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;font-family:inherit;transition:background .12s}
+.add-photo-btn:hover{background:var(--surface2);color:var(--text2)}
+.empty{text-align:center;padding:3rem 0;color:var(--text2);font-size:13px}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:12px}
+.panel-title{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.add-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:7px;margin-bottom:7px}
+.add-row{display:flex;gap:7px;margin-bottom:7px}
+.panel input,.panel select{padding:7px 9px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;width:100%}
+.panel input:focus,.panel select:focus{outline:none;border-color:var(--text3)}
+.panel input::placeholder{color:var(--text3)}
+.panel-foot{display:flex;justify-content:flex-end}
+.cats-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.cat-pill{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:12px}
+.cat-pill-del{font-size:14px;color:var(--text2);cursor:pointer;border:none;background:none;padding:0;line-height:1}
+.cat-pill-del:hover{color:var(--red-tx)}
+.cat-add-row{display:flex;gap:6px}
+.cat-add-row input{flex:1;padding:6px 9px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit}
+.cat-add-row input:focus{outline:none;border-color:var(--text3)}
+.cat-add-row input::placeholder{color:var(--text3)}
+
+/* SYNC PANEL */
+.sync-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:12px}
+.sync-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+@media(max-width:600px){.sync-cols{grid-template-columns:1fr}}
+.sync-col{border:1px solid var(--border);border-radius:var(--r);padding:13px}
+.sync-col-title{font-size:13px;font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.sync-col-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.sync-col-desc code{background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px}
+.sync-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.sync-info{font-size:11px;color:var(--text3)}
+.sync-info.ok{color:var(--teal-tx)}
+
+/* Drive setup steps */
+.drive-steps{display:flex;flex-direction:column;gap:8px;margin:8px 0 12px;counter-reset:step}
+.drive-step{display:flex;gap:9px;font-size:12px;color:var(--text2);line-height:1.5;align-items:flex-start}
+.drive-step::before{counter-increment:step;content:counter(step);width:19px;height:19px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;margin-top:1px}
+.drive-step a{color:var(--blue-tx)}
+.drive-step code{background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;color:var(--text)}
+.cid-row{display:flex;gap:6px}
+.cid-row input{flex:1;padding:7px 9px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit}
+.cid-row input:focus{outline:none;border-color:var(--text3)}
+.cid-row input::placeholder{color:var(--text3)}
+
+/* Drive structure preview */
+.drive-tree{background:var(--surface2);border-radius:var(--rs);padding:10px 12px;font-size:11px;font-family:monospace;line-height:1.9;color:var(--text2);margin-top:8px}
+.drive-tree .folder{color:var(--text);font-weight:600}
+.drive-tree .desc{font-family:-apple-system,sans-serif;color:var(--text3);font-size:10px}
+
+/* progress */
+.prog-wrap{display:none;margin-top:10px}
+.prog-wrap.show{display:block}
+.prog-msg{font-size:12px;color:var(--text2);margin-bottom:4px}
+.prog-bar{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--teal-tx);border-radius:2px;transition:width .25s;width:0}
+
+/* MODALS */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r);width:560px;max-width:96vw;max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-sm{width:380px}
+.modal-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-head h3{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
+.modal-close{font-size:20px;background:none;border:none;color:var(--text2);cursor:pointer;line-height:1;padding:0 3px;flex-shrink:0}
+.modal-body{padding:0;overflow-y:auto;flex:1;display:flex;flex-direction:column}
+.modal-foot{padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:7px;flex-shrink:0}
+.modal-img{width:100%;border-radius:var(--rs);display:block}
+
+.ntabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ntab{flex:1;padding:10px 12px;font-size:13px;cursor:pointer;color:var(--text2);border:none;background:none;font-family:inherit;border-bottom:2px solid transparent}
+.ntab.active{color:var(--text);border-bottom-color:var(--text)}
+.ntab-pane{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
+.ntab-pane.active{display:flex}
+.notes-area{padding:14px 16px;display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto}
+.notes-area textarea{width:100%;min-height:200px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;resize:vertical;line-height:1.6}
+.notes-area textarea:focus{outline:none;border-color:var(--text3)}
+.notes-area textarea::placeholder{color:var(--text3)}
+.hint{font-size:11px;color:var(--text3)}
+.log-scroll{flex:1;overflow-y:auto;padding:10px 16px;display:flex;flex-direction:column;gap:6px;min-height:0}
+.log-item{display:flex;gap:10px;padding:9px 11px;border-radius:var(--rs);background:var(--surface2)}
+.log-item-body{flex:1;min-width:0}
+.log-item-time{font-size:11px;color:var(--text3);margin-bottom:3px}
+.log-item-text{font-size:13px;white-space:pre-wrap;word-break:break-word;line-height:1.5}
+.log-item-del{font-size:16px;color:var(--text3);cursor:pointer;border:none;background:none;padding:0 2px;flex-shrink:0;line-height:1}
+.log-item-del:hover{color:var(--red-tx)}
+.log-empty{text-align:center;padding:2rem 0;font-size:13px;color:var(--text3)}
+.log-add{padding:10px 16px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:7px}
+.log-add textarea{width:100%;min-height:68px;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;resize:none;line-height:1.5}
+.log-add textarea:focus{outline:none;border-color:var(--text3)}
+.log-add textarea::placeholder{color:var(--text3)}
+.log-add-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.quick-btns{display:flex;gap:5px;flex-wrap:wrap}
+.qbtn{font-size:11px;padding:4px 9px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;white-space:nowrap}
+.qbtn:hover{background:var(--surface2)}
+
+.pt-row{display:flex;gap:6px;margin-bottom:12px}
+.pt-btn{flex:1;padding:8px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface2);color:var(--text2);cursor:pointer;font-size:13px;font-family:inherit;text-align:center}
+.pt-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:28px 20px;text-align:center;cursor:pointer;color:var(--text2);display:block;transition:background .12s}
+.upload-zone:hover{background:var(--surface2)}
+.upload-zone input{display:none}
+
+.merge-list{display:flex;flex-direction:column;gap:5px;max-height:280px;overflow-y:auto}
+.merge-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 9px;border-radius:var(--rs);background:var(--surface2)}
+.mbadge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.mb-new{background:var(--green-bg);color:var(--green-tx)}
+.mb-upd{background:var(--blue-bg);color:var(--blue-tx)}
+.mb-same{background:var(--gray-bg);color:var(--gray-tx)}
+.merge-detail{font-size:11px;color:var(--text3);margin-left:auto}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:20px;font-size:13px;opacity:0;transition:all .2s;pointer-events:none;z-index:999;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+@media(max-width:600px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .add-grid{grid-template-columns:1fr 1fr}
+  .add-grid input:first-child{grid-column:1/-1}
+  .add-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;min-width:0">
+    <div class="logo">АРГОС <span>/ Canton Fair</span></div>
+    <span class="phase">Phase 1 · 15–19 Apr 2026</span>
+  </div>
+  <div class="hdr-right">
+    <div class="drive-pill off" id="drive-pill">
+      <span class="drive-dot"></span>
+      <span id="drive-pill-text">Drive</span>
+    </div>
+    <button class="btn" onclick="exportCSV()">⬇ CSV</button>
+  </div>
+</header>
+
+<main>
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <div class="srch">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a5 5 0 1 0 3.16 8.87l3.47 3.47 1.06-1.06-3.47-3.47A5 5 0 0 0 7 2zm0 1.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7z"/></svg>
+      <input type="text" id="search" placeholder="Поиск по названию, стенду, заметкам…" oninput="render()"/>
+    </div>
+    <select id="filter-cat" onchange="render()"><option value="">Все категории</option></select>
+    <select id="filter-status" onchange="render()">
+      <option value="">Все статусы</option>
+      <option value="hot">Интересно</option>
+      <option value="sample">Образцы</option>
+      <option value="new">Новый</option>
+      <option value="pass">Пропуск</option>
+    </select>
+  </div>
+
+  <div class="supplier-list" id="list"></div>
+
+  <div class="panel">
+    <div class="panel-title">Добавить поставщика</div>
+    <div class="add-grid">
+      <input type="text" id="n-name" placeholder="Название компании *"/>
+      <input type="text" id="n-stand" placeholder="Стенд (11.1-A22)"/>
+      <select id="n-cat"></select>
+    </div>
+    <div class="add-row">
+      <input type="text" id="n-contact" placeholder="WeChat / WhatsApp / Email"/>
+      <input type="text" id="n-notes" placeholder="Первая заметка (необязательно)"/>
+    </div>
+    <div class="panel-foot"><button class="btn btn-primary" onclick="addSupplier()">+ Добавить</button></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Категории</div>
+    <div class="cats-list" id="cats-list"></div>
+    <div class="cat-add-row">
+      <input type="text" id="new-cat-input" placeholder="Новая категория…"/>
+      <button class="btn" onclick="addCategory()">+ Добавить</button>
+    </div>
+  </div>
+
+  <!-- SYNC PANEL -->
+  <div class="sync-panel">
+    <div class="panel-title">Синхронизация</div>
+    <div class="sync-cols">
+
+      <!-- COL 1: Local backup -->
+      <div class="sync-col">
+        <div class="sync-col-title"><span style="font-size:20px">📱</span> Резервная копия</div>
+        <div class="sync-col-desc">
+          Работает на телефоне и MacBook — без настроек.<br>
+          Сохрани <code>data.json</code> → передай на другое устройство → загрузи.<br>
+          <strong>Умное слияние:</strong> новые компании добавятся, старые обновятся.
+        </div>
+        <div class="sync-btns">
+          <button class="btn btn-teal" onclick="saveBackup()">💾 Сохранить копию</button>
+          <button class="btn" onclick="document.getElementById('load-inp').click()">📂 Загрузить копию</button>
+          <input type="file" id="load-inp" accept=".json" style="display:none" onchange="loadBackup(event)"/>
+        </div>
+        <div class="sync-info" id="backup-info">Копия ещё не сохранялась</div>
+      </div>
+
+      <!-- COL 2: Drive sync -->
+      <div class="sync-col">
+        <div class="sync-col-title"><span style="font-size:20px">☁</span> Google Drive — автосинхронизация</div>
+
+        <!-- NOT connected -->
+        <div id="drive-setup-block">
+          <div class="sync-col-desc">
+            Настраивается один раз. После этого одна кнопка — и всё на Drive:<br>
+            папки по компаниям, фото, <code>info.txt</code> с заметками.
+          </div>
+          <div class="drive-steps">
+            <div class="drive-step">Открой <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → создай проект</div>
+            <div class="drive-step">APIs &amp; Services → Enable APIs → включи <strong>Google Drive API</strong></div>
+            <div class="drive-step">Credentials → + Create Credentials → <strong>OAuth 2.0 Client ID</strong> → тип: Web application</div>
+            <div class="drive-step">
+              Authorized JavaScript origins:<br>
+              <code id="origin-hint">https://artemislamov.github.io</code><br>
+              Authorized redirect URIs:<br>
+              <code id="redirect-hint">https://artemislamov.github.io/canton-fair/canton_fair_tracker.html</code>
+            </div>
+            <div class="drive-step">Вставь Client ID ниже и нажми «Подключить»</div>
+          </div>
+          <div class="cid-row">
+            <input type="text" id="cid-input" placeholder="Client ID (xxxx.apps.googleusercontent.com)"/>
+            <button class="btn btn-teal" onclick="driveConnect()">Подключить →</button>
+          </div>
+        </div>
+
+        <!-- Connected -->
+        <div id="drive-connected-block" style="display:none">
+          <div class="sync-col-desc" style="margin-bottom:8px">
+            Подключено как <strong id="drive-email-txt">—</strong>
+          </div>
+          <div class="sync-btns">
+            <button class="btn btn-teal" id="btn-sync" onclick="driveSync()">☁ Синхронизировать</button>
+            <button class="btn" onclick="driveLoad()">📥 Загрузить с Drive</button>
+            <button class="btn" onclick="driveDisconnect()">Отключить</button>
+          </div>
+          <div class="sync-info ok" id="drive-sync-info">Ещё не синхронизировано</div>
+          <div class="drive-tree" id="drive-tree" style="display:none"></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="prog-wrap" id="prog-wrap">
+      <div class="prog-msg" id="prog-msg">Подготовка…</div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+</main>
+
+<!-- NOTES MODAL -->
+<div class="modal-bg" id="notes-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="notes-title">Заметки</h3>
+      <button class="modal-close" onclick="closeModal('notes-modal')">×</button>
+    </div>
+    <div class="ntabs">
+      <button class="ntab active" id="ntab-g" onclick="switchTab('g')">📝 Общие заметки</button>
+      <button class="ntab" id="ntab-l" onclick="switchTab('l')">🗂 Лог переговоров</button>
+    </div>
+    <div class="modal-body">
+      <div class="ntab-pane active" id="npane-g">
+        <div class="notes-area">
+          <textarea id="gen-ta" placeholder="MOQ, цены FOB, условия, впечатления…&#10;&#10;Пример:&#10;MOQ — 200 шт. FOB $12.50 при 500+&#10;Упаковка: кастом +$0.30/шт · Срок: 35 дней&#10;Сертификаты: CE, RoHS"></textarea>
+          <span class="hint">Сохраняется автоматически</span>
+        </div>
+      </div>
+      <div class="ntab-pane" id="npane-l">
+        <div class="log-scroll" id="log-scroll"></div>
+        <div class="log-add">
+          <textarea id="log-ta" placeholder="Запись о переговорах… (Cmd+Enter — добавить)"></textarea>
+          <div class="log-add-row">
+            <div class="quick-btns">
+              <button class="qbtn" onclick="qlog('Запросили образцы')">+ Образцы</button>
+              <button class="qbtn" onclick="qlog('Обсудили MOQ и цену')">+ MOQ/цена</button>
+              <button class="qbtn" onclick="qlog('Обменялись WeChat')">+ WeChat</button>
+              <button class="qbtn" onclick="qlog('Взяли каталог и прайс')">+ Каталог</button>
+              <button class="qbtn" onclick="qlog('Договорились о перезвоне')">+ Перезвон</button>
+            </div>
+            <button class="btn btn-primary" onclick="addLog()">Добавить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="modal-bg" id="photo-modal">
+  <div class="modal" style="width:460px">
+    <div class="modal-head">
+      <h3 id="photo-title">Добавить фото</h3>
+      <button class="modal-close" onclick="closeModal('photo-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:14px 16px">
+      <div class="pt-row">
+        <button class="pt-btn active" id="pt-card" onclick="setPT('card')">📇 Визитка</button>
+        <button class="pt-btn" id="pt-product" onclick="setPT('product')">📦 Товар</button>
+        <button class="pt-btn" id="pt-other" onclick="setPT('other')">🖼 Другое</button>
+      </div>
+      <label class="upload-zone">
+        <input type="file" accept="image/*" id="file-inp" onchange="handleFile(event)"/>
+        <div style="font-size:28px;margin-bottom:8px">📷</div>
+        <div style="font-size:13px;font-weight:500">Нажми для выбора фото</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px">С камеры или из галереи · JPEG, PNG</div>
+      </label>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('photo-modal')">Закрыть</button></div>
+  </div>
+</div>
+
+<!-- VIEW PHOTO -->
+<div class="modal-bg" id="view-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="view-title">Фото</h3>
+      <button class="modal-close" onclick="closeModal('view-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:14px 16px;text-align:center">
+      <img id="view-img" class="modal-img" src="" alt="фото"/>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger" onclick="delViewPhoto()">Удалить фото</button>
+      <button class="btn" onclick="closeModal('view-modal')">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE -->
+<div class="modal-bg" id="del-modal">
+  <div class="modal modal-sm">
+    <div class="modal-head"><h3>Удалить поставщика?</h3><button class="modal-close" onclick="closeModal('del-modal')">×</button></div>
+    <div class="modal-body" style="padding:14px 16px">
+      <p id="del-name" style="font-size:13px;font-weight:500"></p>
+      <p style="font-size:12px;color:var(--text3);margin-top:6px">Удалится только в этом браузере. Папка на Drive останется.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('del-modal')">Отмена</button>
+      <button class="btn btn-danger" onclick="confirmDel()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<!-- MERGE REPORT -->
+<div class="modal-bg" id="merge-modal">
+  <div class="modal modal-sm">
+    <div class="modal-head"><h3>Результат загрузки</h3><button class="modal-close" onclick="closeModal('merge-modal')">×</button></div>
+    <div class="modal-body" style="padding:14px 16px">
+      <p id="merge-summary" style="font-size:13px;color:var(--text2);margin-bottom:10px"></p>
+      <div class="merge-list" id="merge-list"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-primary" onclick="closeModal('merge-modal')">Готово</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SK='cf_v8',CK='cf_cats_v2',MK='cf_meta';
+const SL={hot:'Интересно',sample:'Образцы',new:'Новый',pass:'Пропуск'};
+const SC=['new','hot','sample','pass'];
+const CI={'Jump starter':'⚡','Компрессор':'💨','LED освещение':'💡','Power tools':'🔧','Мойка высокого давления':'💧','Другое':'📦'};
+const PT={card:'Визитка',product:'Товар',other:'Фото'};
+const ROOT='Canton Fair 2026';
+const SCOPE='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+
+const DEF_CATS=['Jump starter','Компрессор','LED освещение','Power tools','Мойка высокого давления','Другое'];
+const DEF_DATA=[
+  {id:1,name:'Shenzhen GOOLOO Tech',stand:'11.1-C22',cat:'Jump starter',status:'hot',contact:'gooloo_wc',generalNotes:'5000A peak, OEM возможен.\nMOQ — 200 шт. FOB $12.50 при 500+\nСертификаты: CE, RoHS',log:[{ts:Date.now()-3600000,text:'Обсудили условия OEM упаковки'},{ts:Date.now()-900000,text:'Обменялись WeChat'}],photos:[]},
+  {id:2,name:'Ningbo Yanming Auto',stand:'11.1-D08',cat:'Jump starter',status:'sample',contact:'',generalNotes:'',log:[{ts:Date.now()-7200000,text:'Запросили образец JS-800'},{ts:Date.now()-1800000,text:'Договорились о перезвоне в 10:00'}],photos:[]},
+  {id:3,name:'Guangzhou Autown',stand:'11.2-B14',cat:'Компрессор',status:'hot',contact:'',generalNotes:'150 PSI, тихий мотор DC.\nFOB $28/шт при 300+',log:[],photos:[]},
+  {id:4,name:'Foshan Kasen LED',stand:'11.3-F06',cat:'LED освещение',status:'new',contact:'',generalNotes:'',log:[],photos:[]},
+];
+
+function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function lsSave(){
+  try{localStorage.setItem(SK,JSON.stringify(sup));localStorage.setItem(CK,JSON.stringify(cats));localStorage.setItem(MK,JSON.stringify(meta));}
+  catch(e){if(e.name==='QuotaExceededError')toast('⚠ Память браузера заполнена — сохрани резервную копию');}
+}
+
+let sup=ls(SK,DEF_DATA);
+let cats=ls(CK,[...DEF_CATS]);
+let meta=ls(MK,{});
+let nid=sup.length?Math.max(...sup.map(s=>s.id))+1:1;
+let pmId=null,ptType='card',vmId=null,vmIdx=null,dmId=null,nmId=null;
+
+function icon(c){return CI[c]||'📦';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmt(ts){return new Date(ts).toLocaleString('ru',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+function fmtLong(ts){return new Date(ts).toLocaleString('ru',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+
+function toast(msg,dur=2500){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
+}
+function setProgress(msg,pct,show=true){
+  document.getElementById('prog-wrap').classList.toggle('show',show);
+  if(show){document.getElementById('prog-msg').textContent=msg;document.getElementById('prog-fill').style.width=pct+'%';}
+}
+
+// Auto-fill OAuth hints from current URL
+(function(){
+  const o=location.origin;
+  const r=location.href.split('#')[0];
+  document.getElementById('origin-hint').textContent=o;
+  document.getElementById('redirect-hint').textContent=r;
+})();
+
+/* ============================================================ RENDER */
+function render(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const fc=document.getElementById('filter-cat').value;
+  const fs=document.getElementById('filter-status').value;
+  const fil=sup.filter(s=>{
+    const hay=[s.name,s.stand,s.cat,s.generalNotes||'',s.contact||'',...(s.log||[]).map(l=>l.text)].join(' ').toLowerCase();
+    if(q&&!hay.includes(q))return false;
+    if(fc&&s.cat!==fc)return false;
+    if(fs&&s.status!==fs)return false;
+    return true;
+  });
+  const list=document.getElementById('list');
+  if(!fil.length){list.innerHTML='<div class="empty">🔍 Нет поставщиков</div>';renderMeta();return;}
+  list.innerHTML=fil.map(s=>{
+    const ph=s.photos||[],log=s.log||[],gn=s.generalNotes||'';
+    const nc=(gn.trim()?1:0)+log.length;
+    let prev='';
+    if(gn.trim())prev+=`<div class="notes-general-preview" onclick="openNotes(${s.id})">${esc(gn.trim().split('\n').slice(0,2).join('\n'))}</div>`;
+    if(log.length)prev+=`<div class="log-preview">${log.slice(-2).reverse().map(l=>`<div class="log-entry-preview" onclick="openNotes(${s.id})"><span class="log-time-preview">${fmt(l.ts)}</span><span class="log-text-preview">${esc(l.text)}</span></div>`).join('')}</div>`;
+    if(prev)prev+=`<span class="notes-more" onclick="openNotes(${s.id})">Все заметки →</span>`;
+    const phHtml=ph.map((p,i)=>`<div class="thumb-wrap" onclick="viewPhoto(${s.id},${i})"><img src="${p.data}" alt="фото"/><div class="thumb-label">${PT[p.type]||'Фото'}</div>${p.driveId?'<div class="thumb-synced">✓</div>':''}<div class="thumb-del" onclick="event.stopPropagation();delPhoto(${s.id},${i})">×</div></div>`).join('')+
+      `<button class="add-photo-btn" onclick="openPhoto(${s.id})"><span style="font-size:18px">📷</span>Фото</button>`;
+    return `<div class="card s-${s.status}">
+      <div class="card-main">
+        <div class="crow1">
+          <div class="cicon">${icon(s.cat)}</div>
+          <div class="cmeta"><div class="cname">${esc(s.name)}</div><div class="csub">${esc(s.cat)}</div></div>
+          <div class="cright">
+            <span class="badge b-${s.status}" onclick="cycleStatus(${s.id})">${SL[s.status]}</span>
+            <span class="cstand">${esc(s.stand)}</span>
+            ${s.contact?`<span class="ccontact">📱 ${esc(s.contact)}</span>`:''}
+          </div>
+        </div>
+        <div class="crow-actions">
+          <input type="text" placeholder="WeChat / Email…" value="${esc(s.contact)}" oninput="sf(${s.id},'contact',this.value)"/>
+          <button class="icon-btn" onclick="openNotes(${s.id})" title="Заметки">📝${nc?`<span class="note-count">${nc>9?'9+':nc}</span>`:''}</button>
+          <button class="icon-btn" onclick="openPhoto(${s.id})" title="Фото">📷</button>
+          <button class="icon-btn del" onclick="askDel(${s.id})">×</button>
+        </div>
+      </div>
+      ${prev?`<div class="card-notes-preview">${prev}</div>`:''}
+      <div class="photos-row">${phHtml}</div>
+    </div>`;
+  }).join('');
+  renderMeta();
+}
+
+function renderMeta(){
+  const tot=sup.length,hot=sup.filter(s=>s.status==='hot').length,smp=sup.filter(s=>s.status==='sample').length,pas=sup.filter(s=>s.status==='pass').length;
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><div class="stat-n">${tot}</div><div class="stat-l">Всего</div></div>
+    <div class="stat s-hot"><div class="stat-n">${hot}</div><div class="stat-l">Интересно</div></div>
+    <div class="stat s-smp"><div class="stat-n">${smp}</div><div class="stat-l">Образцы</div></div>
+    <div class="stat s-pas"><div class="stat-n">${pas}</div><div class="stat-l">Пропуск</div></div>`;
+  ['filter-cat','n-cat'].forEach(id=>{
+    const el=document.getElementById(id),cur=el.value;
+    el.innerHTML=id==='filter-cat'?'<option value="">Все категории</option>':'';
+    cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;el.appendChild(o);});
+    if(cur)el.value=cur;
+  });
+  document.getElementById('cats-list').innerHTML=cats.map((c,i)=>`<div class="cat-pill"><span>${icon(c)} ${esc(c)}</span><button class="cat-pill-del" onclick="delCat(${i})">×</button></div>`).join('');
+  if(meta.lastBackup)document.getElementById('backup-info').textContent='Последняя копия: '+fmtLong(meta.lastBackup);
+  if(meta.driveSync)document.getElementById('drive-sync-info').textContent='Синхронизировано: '+fmtLong(meta.driveSync);
+}
+
+/* ============================================================ CRUD */
+function cycleStatus(id){const s=sup.find(x=>x.id===id);if(!s)return;s.status=SC[(SC.indexOf(s.status)+1)%SC.length];lsSave();render();toast('Статус → '+SL[s.status]);}
+function sf(id,f,v){const s=sup.find(x=>x.id===id);if(s){s[f]=v;lsSave();}}
+function addSupplier(){
+  const name=document.getElementById('n-name').value.trim();if(!name){document.getElementById('n-name').focus();return;}
+  sup.push({id:nid++,name,stand:document.getElementById('n-stand').value.trim()||'—',cat:document.getElementById('n-cat').value||cats[0],status:'new',contact:document.getElementById('n-contact').value.trim(),generalNotes:document.getElementById('n-notes').value.trim(),log:[],photos:[]});
+  ['n-name','n-stand','n-notes','n-contact'].forEach(id=>document.getElementById(id).value='');
+  lsSave();render();toast('Поставщик добавлен');document.getElementById('n-name').focus();
+}
+function addCategory(){const inp=document.getElementById('new-cat-input'),name=inp.value.trim();if(!name)return;if(cats.includes(name)){toast('Уже есть');return;}cats.push(name);inp.value='';lsSave();render();toast('Добавлена: '+name);}
+function delCat(i){const name=cats[i];if(sup.some(s=>s.cat===name)&&!confirm(`«${name}» используется. Удалить?`))return;cats.splice(i,1);lsSave();render();}
+function askDel(id){dmId=id;const s=sup.find(x=>x.id===id);document.getElementById('del-name').textContent=s?s.name:'';document.getElementById('del-modal').classList.add('open');}
+function confirmDel(){if(dmId===null)return;const s=sup.find(x=>x.id===dmId);sup=sup.filter(x=>x.id!==dmId);lsSave();render();closeModal('del-modal');toast('Удалён: '+(s?s.name:''));dmId=null;}
+
+/* ============================================================ NOTES */
+function openNotes(id){
+  nmId=id;const s=sup.find(x=>x.id===id);if(!s)return;
+  document.getElementById('notes-title').textContent=s.name;
+  document.getElementById('gen-ta').value=s.generalNotes||'';
+  switchTab('g');document.getElementById('notes-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('gen-ta').focus(),80);
+}
+function switchTab(t){
+  ['g','l'].forEach(x=>{document.getElementById('ntab-'+x).classList.toggle('active',x===t);document.getElementById('npane-'+x).classList.toggle('active',x===t);});
+  if(t==='l')renderLog();
+}
+document.getElementById('gen-ta').addEventListener('input',function(){const s=sup.find(x=>x.id===nmId);if(s){s.generalNotes=this.value;lsSave();}});
+function renderLog(){
+  const s=nmId!==null?sup.find(x=>x.id===nmId):null;
+  const log=s?[...(s.log||[])].reverse():[];
+  const area=document.getElementById('log-scroll');
+  if(!log.length){area.innerHTML='<div class="log-empty">Записей пока нет</div>';return;}
+  area.innerHTML=log.map((e,ri)=>{const i=(s.log.length-1)-ri;return `<div class="log-item"><div class="log-item-body"><div class="log-item-time">${fmt(e.ts)}</div><div class="log-item-text">${esc(e.text)}</div></div><button class="log-item-del" onclick="delLog(${i})">×</button></div>`;}).join('');
+}
+function addLog(){const ta=document.getElementById('log-ta'),text=ta.value.trim();if(!text)return;const s=sup.find(x=>x.id===nmId);if(!s)return;if(!s.log)s.log=[];s.log.push({ts:Date.now(),text});ta.value='';lsSave();renderLog();render();toast('Запись добавлена');}
+function qlog(text){const s=sup.find(x=>x.id===nmId);if(!s)return;if(!s.log)s.log=[];s.log.push({ts:Date.now(),text});lsSave();renderLog();render();toast('✓ '+text);}
+function delLog(i){const s=sup.find(x=>x.id===nmId);if(!s||!s.log)return;s.log.splice(i,1);lsSave();renderLog();render();}
+
+/* ============================================================ PHOTOS */
+function openPhoto(id){pmId=id;const s=sup.find(x=>x.id===id);document.getElementById('photo-title').textContent='Фото — '+(s?s.name:'');setPT('card');document.getElementById('file-inp').value='';document.getElementById('photo-modal').classList.add('open');}
+function setPT(t){ptType=t;['card','product','other'].forEach(x=>document.getElementById('pt-'+x).classList.toggle('active',x===t));}
+function handleFile(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas'),MAX=900;let w=img.width,h=img.height;
+      if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
+      c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      const data=c.toDataURL('image/jpeg',.78);
+      const s=sup.find(x=>x.id===pmId);
+      if(s){if(!s.photos)s.photos=[];s.photos.push({type:ptType,data,driveId:null});lsSave();render();toast('Фото добавлено');closeModal('photo-modal');}
+    };img.src=ev.target.result;
+  };reader.readAsDataURL(file);
+}
+function delPhoto(sid,idx){const s=sup.find(x=>x.id===sid);if(s&&s.photos){s.photos.splice(idx,1);lsSave();render();toast('Фото удалено');}}
+function viewPhoto(sid,idx){const s=sup.find(x=>x.id===sid);if(!s||!s.photos[idx])return;vmId=sid;vmIdx=idx;const p=s.photos[idx];document.getElementById('view-title').textContent=(PT[p.type]||'Фото')+' — '+s.name;document.getElementById('view-img').src=p.data;document.getElementById('view-modal').classList.add('open');}
+function delViewPhoto(){if(vmId!==null&&vmIdx!==null){delPhoto(vmId,vmIdx);closeModal('view-modal');vmId=null;vmIdx=null;}}
+
+/* ============================================================ BACKUP */
+function saveBackup(){
+  const blob=new Blob([JSON.stringify({version:2,savedAt:new Date().toISOString(),suppliers:sup,categories:cats},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`canton_fair_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);
+  meta.lastBackup=Date.now();lsSave();render();toast('💾 Резервная копия сохранена');
+}
+function loadBackup(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.suppliers){toast('Неверный формат файла');return;}
+      const report=mergeData(data);
+      meta.lastBackup=Date.now();lsSave();render();
+      const added=report.filter(r=>r.s==='new').length,updated=report.filter(r=>r.s==='upd').length,same=report.filter(r=>r.s==='same').length;
+      document.getElementById('merge-summary').textContent=`Добавлено: ${added} · Обновлено: ${updated} · Без изменений: ${same}`;
+      document.getElementById('merge-list').innerHTML=report.map(r=>`<div class="merge-item"><span class="mbadge ${r.s==='new'?'mb-new':r.s==='upd'?'mb-upd':'mb-same'}">${r.s==='new'?'Новый':r.s==='upd'?'Обновлён':'Без изменений'}</span><span>${esc(r.name)}</span>${r.d?`<span class="merge-detail">${esc(r.d)}</span>`:''}</div>`).join('');
+      document.getElementById('merge-modal').classList.add('open');
+    }catch(err){toast('Ошибка: '+err.message);}
+  };
+  reader.readAsText(file);e.target.value='';
+}
+function mergeData(data){
+  const report=[];
+  (data.categories||[]).forEach(c=>{if(!cats.includes(c))cats.push(c);});
+  (data.suppliers||[]).forEach(imp=>{
+    const ex=sup.find(s=>s.name===imp.name);
+    if(!ex){sup.push({...imp,id:nid++});report.push({name:imp.name,s:'new'});return;}
+    const changed=[];
+    if(imp.status&&imp.status!==ex.status){ex.status=imp.status;changed.push('статус');}
+    if(imp.contact&&!ex.contact){ex.contact=imp.contact;changed.push('контакт');}
+    if(imp.stand&&imp.stand!=='—'&&imp.stand!==ex.stand){ex.stand=imp.stand;changed.push('стенд');}
+    if((imp.generalNotes||'').length>(ex.generalNotes||'').length){ex.generalNotes=imp.generalNotes;changed.push('заметки');}
+    const existTs=new Set((ex.log||[]).map(l=>l.ts));
+    const newE=(imp.log||[]).filter(l=>!existTs.has(l.ts));
+    if(newE.length){if(!ex.log)ex.log=[];ex.log.push(...newE);ex.log.sort((a,b)=>a.ts-b.ts);changed.push(`+${newE.length} в логе`);}
+    const existD=new Set((ex.photos||[]).map(p=>p.data.slice(0,50)));
+    const newP=(imp.photos||[]).filter(p=>!existD.has(p.data.slice(0,50)));
+    if(newP.length){if(!ex.photos)ex.photos=[];ex.photos.push(...newP);changed.push(`+${newP.length} фото`);}
+    report.push({name:imp.name,s:changed.length?'upd':'same',d:changed.join(', ')});
+  });
+  return report;
+}
+
+/* ============================================================ info.txt */
+function buildInfo(s){
+  const D='━'.repeat(42);
+  let t=s.name+'\n'+D+'\n';
+  t+=`Стенд:     ${s.stand}\nКатегория: ${s.cat}\nСтатус:    ${SL[s.status]||s.status}\n`;
+  if(s.contact)t+=`Контакт:   ${s.contact}\n`;
+  t+=`Фото:      ${(s.photos||[]).length} шт.\n`;
+  if((s.generalNotes||'').trim())t+='\nЗАМЕТКИ\n'+D+'\n'+s.generalNotes.trim()+'\n';
+  const log=s.log||[];
+  if(log.length){t+='\nЛОГ ПЕРЕГОВОРОВ\n'+D+'\n';log.forEach(e=>{t+=fmt(e.ts)+'\n'+e.text+'\n\n';});}
+  t+=D+'\nОбновлено: '+new Date().toLocaleString('ru')+'\n';
+  return t;
+}
+
+/* ============================================================ DRIVE AUTH */
+function getToken(){const t=meta.driveToken,exp=meta.driveExpiry||0;return(t&&Date.now()<exp-60000)?t:null;}
+
+function driveConnect(){
+  const cid=document.getElementById('cid-input').value.trim();
+  if(!cid){toast('Введи Client ID');return;}
+  meta.driveClientId=cid;lsSave();
+  const url='https://accounts.google.com/o/oauth2/auth?'+new URLSearchParams({
+    client_id:cid,redirect_uri:location.href.split('#')[0],
+    response_type:'token',scope:SCOPE,prompt:'select_account'
+  });
+  location.href=url;
+}
+function checkOAuth(){
+  if(!location.hash.includes('access_token='))return;
+  const p=new URLSearchParams(location.hash.substring(1));
+  const token=p.get('access_token'),exp=parseInt(p.get('expires_in')||'3600');
+  if(token){meta.driveToken=token;meta.driveExpiry=Date.now()+exp*1000;lsSave();history.replaceState(null,'',location.pathname);fetchEmail(token);updateDriveUI();toast('✓ Google Drive подключён!');}
+}
+async function fetchEmail(token){
+  try{const r=await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json',{headers:{Authorization:'Bearer '+token}});const d=await r.json();if(d.email){meta.driveEmail=d.email;lsSave();updateDriveUI();}}catch(e){}
+}
+function driveDisconnect(){if(!confirm('Отключить Drive?'))return;delete meta.driveToken;delete meta.driveExpiry;delete meta.driveEmail;lsSave();updateDriveUI();toast('Drive отключён');}
+
+function updateDriveUI(){
+  const ok=!!getToken();
+  document.getElementById('drive-setup-block').style.display=ok?'none':'block';
+  document.getElementById('drive-connected-block').style.display=ok?'block':'none';
+  const pill=document.getElementById('drive-pill');pill.className='drive-pill '+(ok?'on':'off');
+  document.getElementById('drive-pill-text').textContent=ok?(meta.driveEmail||'Drive ✓'):'Drive';
+  if(ok)document.getElementById('drive-email-txt').textContent=meta.driveEmail||'—';
+  if(meta.driveClientId)document.getElementById('cid-input').value=meta.driveClientId;
+  // show tree if synced
+  if(ok&&meta.driveSync){
+    const tree=document.getElementById('drive-tree');
+    tree.style.display='block';
+    tree.innerHTML=`<div><span class="folder">📁 ${ROOT}/</span></div>
+<div>&nbsp;&nbsp;<span>📄 canton_fair_tracker.html</span> <span class="desc">← само приложение</span></div>
+<div>&nbsp;&nbsp;<span>📄 _data.json</span> <span class="desc">← резервная копия</span></div>
+<div>&nbsp;&nbsp;<span>📄 _все_поставщики.csv</span></div>
+${sup.slice(0,3).map(s=>`<div>&nbsp;&nbsp;<span class="folder">📁 ${esc(s.name)}/</span></div><div>&nbsp;&nbsp;&nbsp;&nbsp;<span>📄 info.txt</span>${(s.photos||[]).length?` <span class="desc">+ ${(s.photos||[]).length} фото</span>`:''}</div>`).join('')}
+${sup.length>3?`<div>&nbsp;&nbsp;<span class="desc">...ещё ${sup.length-3} папок</span></div>`:''}`;
+  }
+}
+
+/* ============================================================ DRIVE API */
+async function dFetch(method,path,body){
+  const t=getToken();if(!t)throw new Error('no_token');
+  const r=await fetch('https://www.googleapis.com/drive/v3'+path+'?fields=id,name',{method,headers:{Authorization:'Bearer '+t,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});
+  if(!r.ok)throw new Error(r.status);return r.json();
+}
+async function dList(q){
+  const t=getToken();if(!t)throw new Error('no_token');
+  const r=await fetch('https://www.googleapis.com/drive/v3/files?'+new URLSearchParams({q,fields:'files(id,name)',spaces:'drive'}),{headers:{Authorization:'Bearer '+t}});
+  return(await r.json()).files||[];
+}
+async function findOrCreate(name,parentId){
+  const safe=name.replace(/'/g,"\\'");
+  const q=`name='${safe}' and mimeType='application/vnd.google-apps.folder' and trashed=false`+(parentId?` and '${parentId}' in parents`:'');
+  const f=await dList(q);if(f.length)return f[0].id;
+  const b={name,mimeType:'application/vnd.google-apps.folder'};if(parentId)b.parents=[parentId];
+  return(await dFetch('POST','/files',b)).id;
+}
+async function findFile(name,parentId){
+  const safe=name.replace(/'/g,"\\'");
+  const f=await dList(`name='${safe}' and '${parentId}' in parents and trashed=false`);
+  return f.length?f[0].id:null;
+}
+async function uploadBlob(name,blob,parentId){
+  const t=getToken();
+  const form=new FormData();
+  form.append('metadata',new Blob([JSON.stringify({name,parents:[parentId]})],{type:'application/json'}));
+  form.append('file',blob);
+  const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:'Bearer '+t},body:form});
+  if(!r.ok)throw new Error('upload '+r.status);return(await r.json()).id;
+}
+async function updateBlob(fileId,blob){
+  const t=getToken();
+  const r=await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,{method:'PATCH',headers:{Authorization:'Bearer '+t,'Content-Type':blob.type},body:blob});
+  if(!r.ok)throw new Error('update '+r.status);return fileId;
+}
+async function upsert(name,blob,parentId,existingId){
+  if(!existingId)return await uploadBlob(name,blob,parentId);
+  return await updateBlob(existingId,blob);
+}
+
+/* ============================================================ DRIVE SYNC */
+async function driveSync(){
+  const t=getToken();if(!t){toast('Подключи Drive');return;}
+  const btn=document.getElementById('btn-sync');btn.disabled=true;btn.textContent='Синхронизация…';
+  try{
+    setProgress('Создаю папку Canton Fair 2026…',5);
+    const rootId=await findOrCreate(ROOT,null);
+
+    // Upload app HTML
+    setProgress('Загружаю приложение…',10);
+    try{const blob=new Blob([document.documentElement.outerHTML],{type:'text/html'});const eid=await findFile('canton_fair_tracker.html',rootId);await upsert('canton_fair_tracker.html',blob,rootId,eid);}catch(e){}
+
+    for(let i=0;i<sup.length;i++){
+      const s=sup[i];setProgress(`[${i+1}/${sup.length}] ${s.name}`,Math.round(15+i/sup.length*72));
+      const fn=s.name.replace(/[/\\:*?"<>|]/g,'_');
+      s.driveFolderId=await findOrCreate(fn,rootId);
+      // Upload new photos
+      for(const p of(s.photos||[])){
+        if(!p.driveId&&p.data){
+          const bin=atob(p.data.split(',')[1]);const bytes=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)bytes[j]=bin.charCodeAt(j);
+          const blob=new Blob([bytes],{type:'image/jpeg'});
+          const fname=`${PT[p.type]||'фото'}_${Date.now()%100000}.jpg`;
+          p.driveId=await uploadBlob(fname,blob,s.driveFolderId);
+        }
+      }
+      // Upsert info.txt
+      const infoBlob=new Blob([buildInfo(s)],{type:'text/plain'});
+      const existInfo=await findFile('info.txt',s.driveFolderId);
+      s.driveInfoId=await upsert('info.txt',infoBlob,s.driveFolderId,existInfo||s.driveInfoId||null);
+      lsSave();
+    }
+
+    // Save _data.json
+    setProgress('Сохраняю резервную копию…',90);
+    const payload={suppliers:sup.map(s=>({...s,photos:(s.photos||[]).map(p=>({type:p.type,driveId:p.driveId}))})),categories:cats,savedAt:new Date().toISOString()};
+    const jsonBlob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const existJson=await findFile('_data.json',rootId);
+    await upsert('_data.json',jsonBlob,rootId,existJson||meta.driveDataId||null);
+
+    // Save CSV
+    const csvBlob=new Blob(['\uFEFF'+buildCSV()],{type:'text/csv'});
+    const existCsv=await findFile('_все_поставщики.csv',rootId);
+    await upsert('_все_поставщики.csv',csvBlob,rootId,existCsv||null);
+
+    meta.driveSync=Date.now();lsSave();setProgress('Готово!',100);
+    setTimeout(()=>setProgress('',0,false),2000);updateDriveUI();render();
+    toast(`✓ Синхронизировано! ${sup.length} компаний на Google Drive`);
+  }catch(e){
+    setProgress('',0,false);console.error(e);
+    if(e.message==='no_token'){toast('Токен истёк — переподключи Drive');driveDisconnect();}
+    else toast('Ошибка: '+e.message);
+  }
+  btn.disabled=false;btn.textContent='☁ Синхронизировать';
+}
+
+async function driveLoad(){
+  const t=getToken();if(!t){toast('Подключи Drive');return;}
+  if(!confirm('Загрузить данные с Drive?\nЛокальные данные обновятся.'))return;
+  try{
+    setProgress('Ищу данные…',20);
+    const rootId=await findOrCreate(ROOT,null);
+    const files=await dList(`name='_data.json' and '${rootId}' in parents and trashed=false`);
+    if(!files.length){toast('_data.json не найден на Drive');setProgress('',0,false);return;}
+    setProgress('Читаю данные…',40);
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${files[0].id}?alt=media`,{headers:{Authorization:'Bearer '+t}});
+    const data=await r.json();
+    if(data.suppliers){
+      const loaded=[];
+      for(let i=0;i<data.suppliers.length;i++){
+        const s=data.suppliers[i];setProgress(`Загружаю фото: ${s.name}`,Math.round(40+i/data.suppliers.length*52));
+        const photos=[];
+        for(const p of(s.photos||[])){
+          if(p.driveId){
+            try{const pr=await fetch(`https://www.googleapis.com/drive/v3/files/${p.driveId}?alt=media`,{headers:{Authorization:'Bearer '+t}});const bl=await pr.blob();const b64=await new Promise(res=>{const rd=new FileReader();rd.onload=e=>res(e.target.result);rd.readAsDataURL(bl);});photos.push({type:p.type,data:b64,driveId:p.driveId});}
+            catch(e){photos.push({type:p.type,data:'',driveId:p.driveId});}
+          }
+        }
+        loaded.push({...s,photos});
+      }
+      sup=loaded;nid=sup.length?Math.max(...sup.map(s=>s.id))+1:1;
+    }
+    if(data.categories)cats=data.categories;
+    meta.driveSync=Date.now();lsSave();setProgress('Готово!',100);setTimeout(()=>setProgress('',0,false),1500);render();updateDriveUI();toast('✓ Данные загружены с Drive');
+  }catch(e){setProgress('',0,false);console.error(e);toast('Ошибка: '+e.message);}
+}
+
+/* ============================================================ CSV */
+function buildCSV(){
+  const rows=[['Название','Стенд','Категория','Статус','Контакт','Заметки','Лог (кол-во)','Фото']];
+  sup.forEach(s=>rows.push([s.name,s.stand,s.cat,SL[s.status],s.contact||'',s.generalNotes||'',(s.log||[]).length,(s.photos||[]).length]));
+  return rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+}
+function exportCSV(){const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(buildCSV());a.download='canton_fair_2026.csv';a.click();toast('CSV экспортирован');}
+
+/* ============================================================ MODALS */
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='notes-modal')render();}
+document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);}));
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.modal-bg.open').forEach(el=>closeModal(el.id));
+  if(e.key==='Enter'&&document.activeElement===document.getElementById('n-name'))addSupplier();
+  if(e.key==='Enter'&&document.activeElement===document.getElementById('new-cat-input'))addCategory();
+  if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)&&document.activeElement===document.getElementById('log-ta'))addLog();
+});
+
+/* ============================================================ INIT */
+// Auto-fill origin/redirect hints from actual URL
+checkOAuth();
+updateDriveUI();
+render();
+</script>
+</body>
+</html>
