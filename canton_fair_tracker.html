@@ -170,6 +170,12 @@ main{max-width:720px;margin:0 auto;padding:20px 14px 100px}
   .field-row{flex-direction:column}
   .drive-connected-row{flex-direction:column;align-items:flex-start}
 }
+
+.status-banner{padding:9px 18px;font-size:13px;font-weight:500;text-align:center;display:none}
+.status-banner.green{background:var(--teal-bg);color:var(--teal-tx);display:block}
+.status-banner.red{background:var(--red-bg);color:var(--red-tx);display:block}
+.status-banner.loading{background:var(--surface2);color:var(--text2);display:block}
+.status-banner button{margin-left:12px;font-size:12px;padding:3px 10px;border:1px solid currentColor;border-radius:20px;background:transparent;color:inherit;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
@@ -186,6 +192,7 @@ main{max-width:720px;margin:0 auto;padding:20px 14px 100px}
     </div>
   </div>
 </header>
+<div class="status-banner" id="status-banner"></div>
 
 <main>
   <div class="factories" id="factories"></div>
@@ -344,8 +351,8 @@ function lsSave() {
 
 let sup = ls(SK, [emptyFactory(1), emptyFactory(2)]);
 // Always exactly 2 slots
-while (sup.length < 2) sup.push(emptyFactory(sup.length + 1));
-sup = sup.slice(0, 2);
+while (sup.length < 4) sup.push(emptyFactory(sup.length + 1));
+sup = sup.slice(0, 4);
 
 let cats = ls(CK, [...DEF_CATS]);
 let meta = ls(MK, {});
@@ -400,12 +407,7 @@ function render() {
         <div class="field-row">
           <input type="text" placeholder="Стенд (11.1-A22)" value="${esc(s.stand)}" oninput="sf(${s.id},'stand',this.value)"/>
           <select id="cat-sel-${s.id}" onchange="sf(${s.id},'cat',this.value)">${catOpts}</select>
-          <button class="icon-btn" onclick="toggleNewCat(${s.id})" title="Добавить категорию" style="flex-shrink:0;padding:0 10px;font-size:16px">＋</button>
-        </div>
-        <div id="new-cat-row-${s.id}" style="display:none" class="field-row">
-          <input type="text" id="new-cat-inp-${s.id}" placeholder="Название новой категории…" onkeydown="if(event.key==='Enter')saveNewCat(${s.id});if(event.key==='Escape')toggleNewCat(${s.id})" style="flex:1"/>
-          <button class="btn btn-teal" onclick="saveNewCat(${s.id})" style="font-size:12px;padding:6px 12px">Добавить</button>
-          <button class="icon-btn" onclick="toggleNewCat(${s.id})" style="flex-shrink:0">✕</button>
+          <button class="icon-btn" onclick="addCat(${s.id})" title="Добавить категорию" style="flex-shrink:0;padding:0 10px;font-size:16px">＋</button>
         </div>
         <div class="field-row">
           <input type="text" placeholder="WeChat / WhatsApp / Email" value="${esc(s.contact)}" oninput="sf(${s.id},'contact',this.value)"/>
@@ -426,20 +428,13 @@ function cycleStatus(id) {
   s.status = SC[(SC.indexOf(s.status)+1) % SC.length];
   lsSave(); render(); toast('Статус → ' + SL[s.status]);
 }
-function toggleNewCat(factoryId) {
-  const row = document.getElementById('new-cat-row-' + factoryId);
-  const inp = document.getElementById('new-cat-inp-' + factoryId);
-  const visible = row.style.display !== 'none';
-  row.style.display = visible ? 'none' : 'flex';
-  if (!visible) setTimeout(() => inp && inp.focus(), 50);
-}
-function saveNewCat(factoryId) {
-  const inp = document.getElementById('new-cat-inp-' + factoryId);
-  if (!inp) return;
-  const trimmed = inp.value.trim();
-  if (!trimmed) { inp.focus(); return; }
-  if (cats.includes(trimmed)) { toast('Такая категория уже есть'); inp.focus(); return; }
+function addCat(factoryId) {
+  const name = prompt('Название новой категории:');
+  if (!name || !name.trim()) return;
+  const trimmed = name.trim();
+  if (cats.includes(trimmed)) { toast('Такая категория уже есть'); return; }
   cats.push(trimmed);
+  // Assign to this factory
   const s = sup.find(x => x.id===factoryId);
   if (s) s.cat = trimmed;
   lsSave(); render(); toast('✓ Категория добавлена: ' + trimmed);
@@ -735,9 +730,36 @@ async function driveSync() {
       await upsert('info.txt', infoBlob, folderId, existInfo || null);
     }
 
+    // Cumulative CSV — append rows, never overwrite
+    setProgress('Обновляю таблицу компаний…', 82);
+    try {
+      const existCsvId = await findFile('_все_компании.csv', rootId);
+      let csvRows = '';
+      const dateStr = new Date().toLocaleDateString('ru');
+      const timeStr = new Date().toLocaleTimeString('ru', {hour:'2-digit', minute:'2-digit'});
+      if (!existCsvId) {
+        // First time — add header
+        csvRows = '\uFEFFДата,Время,Название,Стенд,Категория,Статус,Контакт,Заметки,Лог (записей)\n';
+      } else {
+        // Read existing content
+        const existR = await fetch(`https://www.googleapis.com/drive/v3/files/${existCsvId}?alt=media`, {headers:{Authorization:'Bearer '+getToken()}});
+        csvRows = await existR.text();
+        if (!csvRows.endsWith('\n')) csvRows += '\n';
+      }
+      // Append new companies
+      const toAppend = sup.filter(s => s.name);
+      toAppend.forEach(s => {
+        const row = [dateStr, timeStr, s.name, s.stand||'', s.cat, SL[s.status]||s.status, s.contact||'', (s.generalNotes||'').replace(/"/g,'""'), (s.log||[]).length];
+        csvRows += row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',') + '\n';
+      });
+      const csvBlob = new Blob([csvRows], {type:'text/csv'});
+      await upsert('_все_компании.csv', csvBlob, rootId, existCsvId || null);
+    } catch(e) { console.warn('CSV error:', e); }
+
     // Save _data.json (references only, no base64)
-    setProgress('Сохраняю резервную копию…', 88);
+    setProgress('Сохраняю резервную копию…', 90);
     const payload = {
+      categories: cats,
       suppliers: sup.map(s => ({...s, photos: (s.photos||[]).map(p => ({type:p.type, driveId:p.driveId}))})),
       savedAt: new Date().toISOString()
     };
@@ -765,10 +787,56 @@ async function driveSync() {
   btn.disabled = false; btn.textContent = '☁ Синхронизировать';
 }
 
+
+/* ===== BANNER ===== */
+function showBanner(type, msg, btnLabel, btnFn) {
+  const el = document.getElementById('status-banner');
+  el.className = 'status-banner ' + type;
+  el.innerHTML = msg + (btnLabel ? `<button onclick="${btnFn}">${btnLabel}</button>` : '');
+}
+
+/* ===== AUTO-LOAD CATEGORIES FROM DRIVE ===== */
+async function autoLoadFromDrive() {
+  const t = getToken();
+  if (!t) {
+    showBanner('red', '🔴 Токен истёк или Drive не подключён — переподключись перед работой', 'Переподключить', 'driveReconnect()');
+    return;
+  }
+  try {
+    showBanner('loading', '⏳ Проверяю Drive…');
+    const rootFiles = await dList(`name='_data.json' and trashed=false`);
+    // find _data.json inside Canton Fair 2026
+    const rootFolders = await dList(`name='${ROOT}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    if (rootFolders.length) {
+      const rootId = rootFolders[0].id;
+      const jsonFiles = await dList(`name='_data.json' and '${rootId}' in parents and trashed=false`);
+      if (jsonFiles.length) {
+        const r = await fetch(`https://www.googleapis.com/drive/v3/files/${jsonFiles[0].id}?alt=media`, {headers:{Authorization:'Bearer '+t}});
+        const data = await r.json();
+        if (data.categories && Array.isArray(data.categories)) {
+          let added = 0;
+          data.categories.forEach(cat => { if (!cats.includes(cat)) { cats.push(cat); added++; } });
+          if (added > 0) { lsSave(); render(); }
+        }
+        showBanner('green', '🟢 Drive подключён · Категории загружены (' + cats.length + ' шт.)');
+        return;
+      }
+    }
+    showBanner('green', '🟢 Drive подключён · Первая синхронизация создаст структуру папок');
+  } catch(e) {
+    if (e.message === 'no_token') {
+      showBanner('red', '🔴 Токен истёк — переподключись перед работой', 'Переподключить', 'driveReconnect()');
+    } else {
+      showBanner('green', '🟢 Drive подключён');
+    }
+  }
+}
+
 /* ===== INIT ===== */
 checkOAuth();
 updateDriveUI();
 render();
+autoLoadFromDrive();
 </script>
 </body>
 </html>
