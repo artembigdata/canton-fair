@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canton Fair 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f3;--surface:#fff;--surface2:#f1f0ec;--surface3:#e8e7e2;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.16);
+  --text:#1a1a18;--text2:#6b6a64;--text3:#a0a09a;
+  --amber-bg:#faeeda;--amber-tx:#7a4800;
+  --blue-bg:#e4eefb;--blue-tx:#144f99;
+  --green-bg:#e8f3db;--green-tx:#2e6010;
+  --gray-bg:#eeede8;--gray-tx:#555450;
+  --red-bg:#fce8e8;--red-tx:#992222;
+  --teal-bg:#e1f5ee;--teal-tx:#0f6e56;
+  --r:12px;--rs:7px
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1917;--surface:#242320;--surface2:#2e2d2a;--surface3:#3a3935;
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.16);
+  --text:#f0ede6;--text2:#9e9c95;--text3:#6b6963;
+  --amber-bg:#3d2900;--amber-tx:#f5c060;
+  --blue-bg:#0d2a4a;--blue-tx:#7ab8f5;
+  --green-bg:#162a08;--green-tx:#90cc55;
+  --gray-bg:#2a2926;--gray-tx:#b0aea7;
+  --red-bg:#3a0f0f;--red-tx:#f08080;
+  --teal-bg:#04342c;--teal-tx:#5dcaa5;
+}}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
+
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px}
+.logo{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.logo span{color:var(--text2);font-weight:400}
+.phase{font-size:11px;background:var(--amber-bg);color:var(--amber-tx);padding:3px 8px;border-radius:20px;font-weight:500;margin-left:8px;white-space:nowrap}
+.hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.drive-pill{font-size:11px;padding:4px 11px;border-radius:20px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.drive-pill.on{background:var(--teal-bg);color:var(--teal-tx)}
+.drive-pill.off{background:var(--surface2);color:var(--text3)}
+.drive-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+.btn{font-size:13px;padding:8px 15px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;transition:background .12s;white-space:nowrap}
+.btn:hover{background:var(--surface2)}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-primary:hover{opacity:.85}
+.btn-teal{background:var(--teal-bg);color:var(--teal-tx);border-color:transparent;font-weight:500}
+.btn-teal:hover{opacity:.85}
+.btn-danger{background:var(--red-bg);color:var(--red-tx);border-color:transparent}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+main{max-width:720px;margin:0 auto;padding:20px 14px 100px}
+.factories{display:flex;flex-direction:column;gap:14px}
+
+/* FACTORY CARD */
+.factory-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.factory-card.s-hot{border-left:3px solid #e09a20}
+.factory-card.s-sample{border-left:3px solid #3a7cd5}
+.factory-card.s-pass{opacity:.55}
+.factory-header{padding:12px 15px 6px;display:flex;align-items:center;gap:10px}
+.factory-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;cursor:pointer;user-select:none;white-space:nowrap;margin-left:auto}
+.badge:hover{opacity:.8}
+.b-hot{background:var(--amber-bg);color:var(--amber-tx)}
+.b-sample{background:var(--blue-bg);color:var(--blue-tx)}
+.b-new{background:var(--green-bg);color:var(--green-tx)}
+.b-pass{background:var(--gray-bg);color:var(--gray-tx)}
+
+.factory-fields{padding:6px 15px 10px;display:flex;flex-direction:column;gap:8px}
+.fname{font-size:16px;font-weight:600;width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-family:inherit}
+.fname:focus{outline:none;border-color:var(--text3)}
+.fname::placeholder{color:var(--text3);font-weight:400}
+.field-row{display:flex;gap:8px}
+.field-row input,.field-row select{flex:1;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;min-width:0}
+.field-row input:focus,.field-row select:focus{outline:none;border-color:var(--text3)}
+.field-row input::placeholder{color:var(--text3)}
+
+.factory-actions{padding:4px 15px 12px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.icon-btn{height:32px;padding:0 12px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:5px;font-size:12px;font-family:inherit;position:relative;transition:background .12s}
+.icon-btn:hover{background:var(--surface3);color:var(--text)}
+.note-count{position:absolute;top:-5px;right:-5px;width:15px;height:15px;border-radius:50%;background:var(--blue-tx);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:600}
+
+/* PHOTOS */
+.photos-row{display:flex;gap:7px;flex-wrap:wrap;padding:2px 15px 14px}
+.thumb-wrap{position:relative;width:70px;height:70px;border-radius:var(--rs);overflow:hidden;border:1px solid var(--border);cursor:pointer;background:var(--surface2);flex-shrink:0}
+.thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-label{position:absolute;bottom:0;left:0;right:0;font-size:9px;background:rgba(0,0,0,.55);color:#fff;text-align:center;padding:2px 0;line-height:1.4}
+.thumb-synced{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:rgba(15,110,86,.9);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center}
+.thumb-del{position:absolute;top:2px;right:2px;width:17px;height:17px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .15s}
+.thumb-wrap:hover .thumb-del{opacity:1}
+.add-photo-btn{width:70px;height:70px;border-radius:var(--rs);border:1px dashed var(--border2);background:transparent;color:var(--text3);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;font-family:inherit;transition:background .12s;flex-shrink:0}
+.add-photo-btn:hover{background:var(--surface2);color:var(--text2)}
+.drive-cloud{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:70px;height:70px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface2);cursor:default;flex-shrink:0}
+
+/* DRIVE PANEL */
+.drive-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:16px}
+.panel-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.drive-steps{display:flex;flex-direction:column;gap:8px;margin:8px 0 14px;counter-reset:step}
+.drive-step{display:flex;gap:10px;font-size:12px;color:var(--text2);line-height:1.5;align-items:flex-start}
+.drive-step::before{counter-increment:step;content:counter(step);min-width:20px;height:20px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;margin-top:1px}
+.drive-step a{color:var(--blue-tx)}
+.drive-step code{background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;color:var(--text)}
+.cid-row{display:flex;gap:7px}
+.cid-row input{flex:1;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit}
+.cid-row input:focus{outline:none;border-color:var(--text3)}
+.cid-row input::placeholder{color:var(--text3)}
+.drive-connected-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sync-note{font-size:12px;color:var(--text3);background:var(--surface2);border-radius:var(--rs);padding:8px 11px;line-height:1.5;margin-bottom:10px}
+.sync-info{font-size:12px;color:var(--text3);margin-top:8px}
+.sync-info.ok{color:var(--teal-tx)}
+
+/* PROGRESS */
+.prog-wrap{display:none;margin-top:12px}
+.prog-wrap.show{display:block}
+.prog-msg{font-size:12px;color:var(--text2);margin-bottom:5px}
+.prog-bar{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--teal-tx);border-radius:2px;transition:width .25s;width:0}
+
+/* MODALS */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r);width:560px;max-width:96vw;max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-sm{width:400px}
+.modal-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-head h3{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
+.modal-close{font-size:22px;background:none;border:none;color:var(--text2);cursor:pointer;line-height:1;padding:0 3px;flex-shrink:0}
+.modal-body{padding:0;overflow-y:auto;flex:1;display:flex;flex-direction:column}
+.modal-foot{padding:11px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:7px;flex-shrink:0}
+.modal-img{width:100%;border-radius:var(--rs);display:block}
+
+.ntabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ntab{flex:1;padding:11px 12px;font-size:13px;cursor:pointer;color:var(--text2);border:none;background:none;font-family:inherit;border-bottom:2px solid transparent}
+.ntab.active{color:var(--text);border-bottom-color:var(--text)}
+.ntab-pane{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
+.ntab-pane.active{display:flex}
+.notes-area{padding:14px 16px;display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto}
+.notes-area textarea{width:100%;min-height:200px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;resize:vertical;line-height:1.6}
+.notes-area textarea:focus{outline:none;border-color:var(--text3)}
+.notes-area textarea::placeholder{color:var(--text3)}
+.hint{font-size:11px;color:var(--text3)}
+.log-scroll{flex:1;overflow-y:auto;padding:10px 16px;display:flex;flex-direction:column;gap:6px;min-height:0}
+.log-item{display:flex;gap:10px;padding:9px 11px;border-radius:var(--rs);background:var(--surface2)}
+.log-item-body{flex:1;min-width:0}
+.log-item-time{font-size:11px;color:var(--text3);margin-bottom:3px}
+.log-item-text{font-size:13px;white-space:pre-wrap;word-break:break-word;line-height:1.5}
+.log-item-del{font-size:17px;color:var(--text3);cursor:pointer;border:none;background:none;padding:0 2px;flex-shrink:0;line-height:1}
+.log-item-del:hover{color:var(--red-tx)}
+.log-empty{text-align:center;padding:2rem 0;font-size:13px;color:var(--text3)}
+.log-add{padding:10px 16px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:7px}
+.log-add textarea{width:100%;min-height:68px;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;resize:none;line-height:1.5}
+.log-add textarea:focus{outline:none;border-color:var(--text3)}
+.log-add textarea::placeholder{color:var(--text3)}
+.log-add-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.quick-btns{display:flex;gap:5px;flex-wrap:wrap}
+.qbtn{font-size:11px;padding:4px 9px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;white-space:nowrap}
+.qbtn:hover{background:var(--surface2)}
+
+.pt-row{display:flex;gap:6px;margin-bottom:12px}
+.pt-btn{flex:1;padding:9px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--surface2);color:var(--text2);cursor:pointer;font-size:13px;font-family:inherit;text-align:center}
+.pt-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:30px 20px;text-align:center;cursor:pointer;color:var(--text2);display:block;transition:background .12s}
+.upload-zone:hover{background:var(--surface2)}
+.upload-zone input{display:none}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--text);color:var(--bg);padding:9px 18px;border-radius:22px;font-size:13px;opacity:0;transition:all .2s;pointer-events:none;z-index:999;max-width:92vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+@media(max-width:600px){
+  .field-row{flex-direction:column}
+  .drive-connected-row{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;min-width:0">
+    <div class="logo">АРГОС <span>/ Canton Fair</span></div>
+    <span class="phase">Phase 1 · Apr 2026</span>
+  </div>
+  <div class="hdr-right">
+    <div class="drive-pill off" id="drive-pill">
+      <span class="drive-dot"></span>
+      <span id="drive-pill-text">Drive</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="factories" id="factories"></div>
+
+  <!-- DRIVE PANEL -->
+  <div class="drive-panel">
+    <div class="panel-title">Google Drive — синхронизация</div>
+
+    <!-- NOT CONNECTED -->
+    <div id="drive-setup-block">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px">
+        Настрой один раз. После синхронизации данные <strong>автоматически сотрутся</strong> из приложения — и ты можешь вводить следующую фабрику.
+      </p>
+      <div class="drive-steps">
+        <div class="drive-step">Открой <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → проект Canton Fair</div>
+        <div class="drive-step">APIs &amp; Services → Credentials → OAuth 2.0 Client ID</div>
+        <div class="drive-step">
+          Authorized JavaScript origins: <code id="origin-hint"></code><br>
+          Redirect URI: <code id="redirect-hint"></code>
+        </div>
+        <div class="drive-step">Вставь Client ID ниже и нажми «Подключить»</div>
+      </div>
+      <div class="cid-row">
+        <input type="text" id="cid-input" placeholder="Client ID (xxxx.apps.googleusercontent.com)"/>
+        <button class="btn btn-teal" onclick="driveConnect()">Подключить →</button>
+      </div>
+    </div>
+
+    <!-- CONNECTED -->
+    <div id="drive-connected-block" style="display:none">
+      <div class="sync-note">
+        ☁ После нажатия <strong>«Синхронизировать»</strong> — данные обеих фабрик сохранятся на Google Drive, и приложение <strong>автоматически очистится</strong> для следующей пары.
+      </div>
+      <div class="drive-connected-row">
+        <span style="font-size:12px;color:var(--text2)">Подключено: <strong id="drive-email-txt">—</strong></span>
+        <button class="btn btn-teal" id="btn-sync" onclick="driveSync()">☁ Синхронизировать</button>
+        <button class="btn" onclick="driveReconnect()" style="font-size:12px">🔄 Переподключить</button>
+        <button class="btn" onclick="driveDisconnect()" style="font-size:12px;color:var(--text3)">Отключить</button>
+      </div>
+      <div class="sync-info ok" id="drive-sync-info"></div>
+    </div>
+
+    <div class="prog-wrap" id="prog-wrap">
+      <div class="prog-msg" id="prog-msg">Подготовка…</div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+</main>
+
+<!-- NOTES MODAL -->
+<div class="modal-bg" id="notes-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="notes-title">Заметки</h3>
+      <button class="modal-close" onclick="closeModal('notes-modal')">×</button>
+    </div>
+    <div class="ntabs">
+      <button class="ntab active" id="ntab-g" onclick="switchTab('g')">📝 Общие заметки</button>
+      <button class="ntab" id="ntab-l" onclick="switchTab('l')">🗂 Лог переговоров</button>
+    </div>
+    <div class="modal-body">
+      <div class="ntab-pane active" id="npane-g">
+        <div class="notes-area">
+          <textarea id="gen-ta" placeholder="MOQ, цены FOB, условия, впечатления…&#10;&#10;Пример:&#10;MOQ — 200 шт. FOB $12.50 при 500+&#10;Упаковка: кастом +$0.30/шт · Срок: 35 дней&#10;Сертификаты: CE, RoHS"></textarea>
+          <span class="hint" id="save-hint" style="transition:opacity .4s">Сохраняется автоматически</span>
+        </div>
+      </div>
+      <div class="ntab-pane" id="npane-l">
+        <div class="log-scroll" id="log-scroll"></div>
+        <div class="log-add">
+          <textarea id="log-ta" placeholder="Запись о переговорах… (Cmd+Enter — добавить)"></textarea>
+          <div class="log-add-row">
+            <div class="quick-btns">
+              <button class="qbtn" onclick="qlog('Запросили образцы')">+ Образцы</button>
+              <button class="qbtn" onclick="qlog('Обсудили MOQ и цену')">+ MOQ/цена</button>
+              <button class="qbtn" onclick="qlog('Обменялись WeChat')">+ WeChat</button>
+              <button class="qbtn" onclick="qlog('Взяли каталог и прайс')">+ Каталог</button>
+              <button class="qbtn" onclick="qlog('Договорились о перезвоне')">+ Перезвон</button>
+            </div>
+            <button class="btn btn-primary" onclick="addLog()">Добавить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="modal-bg" id="photo-modal">
+  <div class="modal" style="width:440px">
+    <div class="modal-head">
+      <h3 id="photo-title">Добавить фото</h3>
+      <button class="modal-close" onclick="closeModal('photo-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:14px 16px">
+      <div class="pt-row">
+        <button class="pt-btn active" id="pt-card" onclick="setPT('card')">📇 Визитка</button>
+        <button class="pt-btn" id="pt-product" onclick="setPT('product')">📦 Товар</button>
+        <button class="pt-btn" id="pt-other" onclick="setPT('other')">🖼 Другое</button>
+      </div>
+      <label class="upload-zone">
+        <input type="file" accept="image/*" id="file-inp" onchange="handleFile(event)"/>
+        <div style="font-size:30px;margin-bottom:8px">📷</div>
+        <div style="font-size:13px;font-weight:500">Нажми для выбора фото</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px">С камеры или из галереи · JPEG, PNG</div>
+      </label>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('photo-modal')">Закрыть</button></div>
+  </div>
+</div>
+
+<!-- VIEW PHOTO -->
+<div class="modal-bg" id="view-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="view-title">Фото</h3>
+      <button class="modal-close" onclick="closeModal('view-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:14px 16px;text-align:center">
+      <img id="view-img" class="modal-img" src="" alt="фото"/>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger" onclick="delViewPhoto()">Удалить фото</button>
+      <button class="btn" onclick="closeModal('view-modal')">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== CONSTANTS ===== */
+const SK = 'cf_v10', MK = 'cf_meta_v10', CK = 'cf_cats_v10';
+const SL = {hot:'Интересно', sample:'Образцы', new:'Новый', pass:'Пропуск'};
+const SC = ['new','hot','sample','pass'];
+const PT = {card:'Визитка', product:'Товар', other:'Фото'};
+const DEF_CATS = ['Jump starter','Компрессор','LED освещение','Power tools','Мойка высокого давления','Другое'];
+const ROOT = 'Canton Fair 2026';
+const SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+
+/* ===== DATA ===== */
+function emptyFactory(id) {
+  return {id, name:'', stand:'', cat:'Другое', status:'new', contact:'', generalNotes:'', log:[], photos:[]};
+}
+
+function ls(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e) { return d; } }
+function lsSave() {
+  try {
+    localStorage.setItem(SK, JSON.stringify(sup));
+    localStorage.setItem(CK, JSON.stringify(cats));
+    localStorage.setItem(MK, JSON.stringify(meta));
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') toast('⚠ Память браузера заполнена — синхронизируй с Drive');
+  }
+}
+
+let sup = ls(SK, [emptyFactory(1), emptyFactory(2)]);
+// Always exactly 2 slots
+while (sup.length < 2) sup.push(emptyFactory(sup.length + 1));
+sup = sup.slice(0, 2);
+
+let cats = ls(CK, [...DEF_CATS]);
+let meta = ls(MK, {});
+let pmId = null, ptType = 'card', vmId = null, vmIdx = null, nmId = null;
+
+/* ===== UTILS ===== */
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(ts) { return new Date(ts).toLocaleString('ru', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}); }
+
+function toast(msg, dur=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), dur);
+}
+function setProgress(msg, pct, show=true) {
+  document.getElementById('prog-wrap').classList.toggle('show', show);
+  if (show) {
+    document.getElementById('prog-msg').textContent = msg;
+    document.getElementById('prog-fill').style.width = pct + '%';
+  }
+}
+
+(function() {
+  document.getElementById('origin-hint').textContent = location.origin;
+  document.getElementById('redirect-hint').textContent = location.href.split('#')[0];
+})();
+
+/* ===== RENDER ===== */
+function render() {
+  document.getElementById('factories').innerHTML = sup.map((s, idx) => {
+    const ph = s.photos || [], log = s.log || [], gn = s.generalNotes || '';
+    const nc = (gn.trim() ? 1 : 0) + log.length;
+    const catOpts = cats.map(c => `<option value="${esc(c)}"${s.cat===c?' selected':''}>${esc(c)}</option>`).join('');
+    const phHtml = ph.map((p, i) => {
+      if (!p.data && p.driveId)
+        return `<div class="drive-cloud"><span style="font-size:20px">☁</span><span style="font-size:9px;color:var(--text3)">На Drive</span></div>`;
+      return `<div class="thumb-wrap" onclick="viewPhoto(${s.id},${i})">
+        <img src="${p.data}" alt="фото"/>
+        <div class="thumb-label">${PT[p.type]||'Фото'}</div>
+        ${p.driveId ? '<div class="thumb-synced">✓</div>' : ''}
+        <div class="thumb-del" onclick="event.stopPropagation();delPhoto(${s.id},${i})">×</div>
+      </div>`;
+    }).join('') + `<button class="add-photo-btn" onclick="openPhoto(${s.id})"><span style="font-size:20px">📷</span><span>Фото</span></button>`;
+
+    return `<div class="factory-card s-${s.status}">
+      <div class="factory-header">
+        <span class="factory-label">Фабрика ${idx+1}</span>
+        <span class="badge b-${s.status}" onclick="cycleStatus(${s.id})">${SL[s.status]}</span>
+      </div>
+      <div class="factory-fields">
+        <input class="fname" type="text" placeholder="Название компании" value="${esc(s.name)}" oninput="sf(${s.id},'name',this.value)"/>
+        <div class="field-row">
+          <input type="text" placeholder="Стенд (11.1-A22)" value="${esc(s.stand)}" oninput="sf(${s.id},'stand',this.value)"/>
+          <select id="cat-sel-${s.id}" onchange="sf(${s.id},'cat',this.value)">${catOpts}</select>
+          <button class="icon-btn" onclick="addCat(${s.id})" title="Добавить категорию" style="flex-shrink:0;padding:0 10px;font-size:16px">＋</button>
+        </div>
+        <div class="field-row">
+          <input type="text" placeholder="WeChat / WhatsApp / Email" value="${esc(s.contact)}" oninput="sf(${s.id},'contact',this.value)"/>
+        </div>
+      </div>
+      <div class="factory-actions">
+        <button class="icon-btn" onclick="openNotes(${s.id})">📝 Заметки${nc ? `<span class="note-count">${nc > 9 ? '9+' : nc}</span>` : ''}</button>
+      </div>
+      <div class="photos-row">${phHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== CRUD ===== */
+function sf(id, f, v) { const s = sup.find(x => x.id===id); if(s) { s[f]=v; lsSave(); } }
+function cycleStatus(id) {
+  const s = sup.find(x => x.id===id); if(!s) return;
+  s.status = SC[(SC.indexOf(s.status)+1) % SC.length];
+  lsSave(); render(); toast('Статус → ' + SL[s.status]);
+}
+function addCat(factoryId) {
+  const name = prompt('Название новой категории:');
+  if (!name || !name.trim()) return;
+  const trimmed = name.trim();
+  if (cats.includes(trimmed)) { toast('Такая категория уже есть'); return; }
+  cats.push(trimmed);
+  // Assign to this factory
+  const s = sup.find(x => x.id===factoryId);
+  if (s) s.cat = trimmed;
+  lsSave(); render(); toast('✓ Категория добавлена: ' + trimmed);
+}
+
+/* ===== NOTES ===== */
+function openNotes(id) {
+  nmId = id;
+  const s = sup.find(x => x.id===id); if(!s) return;
+  document.getElementById('notes-title').textContent = s.name || ('Фабрика ' + (sup.indexOf(s)+1));
+  document.getElementById('gen-ta').value = s.generalNotes || '';
+  switchTab('g');
+  document.getElementById('notes-modal').classList.add('open');
+  setTimeout(() => document.getElementById('gen-ta').focus(), 80);
+}
+function switchTab(t) {
+  ['g','l'].forEach(x => {
+    document.getElementById('ntab-'+x).classList.toggle('active', x===t);
+    document.getElementById('npane-'+x).classList.toggle('active', x===t);
+  });
+  if (t === 'l') renderLog();
+}
+document.getElementById('gen-ta').addEventListener('input', function() {
+  const s = sup.find(x => x.id===nmId); if(!s) return;
+  s.generalNotes = this.value; lsSave();
+  const hint = document.getElementById('save-hint');
+  hint.textContent = 'Сохранено ✓';
+  hint.style.color = 'var(--teal-tx)';
+  hint.style.opacity = '1';
+  clearTimeout(hint._t);
+  hint._t = setTimeout(() => {
+    hint.textContent = 'Сохраняется автоматически';
+    hint.style.color = '';
+    hint.style.opacity = '.4';
+  }, 1500);
+});
+function renderLog() {
+  const s = nmId !== null ? sup.find(x => x.id===nmId) : null;
+  const el = document.getElementById('log-scroll');
+  if (!s || !s.log || !s.log.length) { el.innerHTML='<div class="log-empty">Записей пока нет</div>'; return; }
+  el.innerHTML = [...s.log].reverse().map((e, ri) => {
+    const i = s.log.length - 1 - ri;
+    return `<div class="log-item">
+      <div class="log-item-body">
+        <div class="log-item-time">${fmt(e.ts)}</div>
+        <div class="log-item-text">${esc(e.text)}</div>
+      </div>
+      <button class="log-item-del" onclick="delLog(${i})">×</button>
+    </div>`;
+  }).join('');
+}
+function addLog() {
+  const ta = document.getElementById('log-ta'), text = ta.value.trim(); if(!text) return;
+  const s = sup.find(x => x.id===nmId); if(!s) return;
+  if(!s.log) s.log = [];
+  s.log.push({ts: Date.now(), text});
+  ta.value = ''; lsSave(); renderLog(); render();
+}
+function qlog(text) {
+  const s = sup.find(x => x.id===nmId); if(!s) return;
+  if(!s.log) s.log = [];
+  s.log.push({ts: Date.now(), text});
+  lsSave(); renderLog(); render(); toast('✓ ' + text);
+}
+function delLog(i) {
+  const s = sup.find(x => x.id===nmId); if(!s || !s.log) return;
+  s.log.splice(i, 1); lsSave(); renderLog(); render();
+}
+
+/* ===== PHOTOS ===== */
+function openPhoto(id) {
+  pmId = id;
+  const s = sup.find(x => x.id===id);
+  document.getElementById('photo-title').textContent = 'Фото — ' + (s ? s.name || ('Фабрика '+(sup.indexOf(s)+1)) : '');
+  setPT('card');
+  document.getElementById('file-inp').value = '';
+  document.getElementById('photo-modal').classList.add('open');
+}
+function setPT(t) {
+  ptType = t;
+  ['card','product','other'].forEach(x => document.getElementById('pt-'+x).classList.toggle('active', x===t));
+}
+function handleFile(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas'), MAX = 900;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = c.toDataURL('image/jpeg', 0.78);
+      const s = sup.find(x => x.id===pmId);
+      if (s) {
+        if (!s.photos) s.photos = [];
+        s.photos.push({type: ptType, data, driveId: null});
+        lsSave(); render(); closeModal('photo-modal'); toast('Фото добавлено');
+      }
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function delPhoto(sid, idx) {
+  const s = sup.find(x => x.id===sid);
+  if (s && s.photos) { s.photos.splice(idx, 1); lsSave(); render(); }
+}
+function viewPhoto(sid, idx) {
+  const s = sup.find(x => x.id===sid); if(!s || !s.photos[idx]) return;
+  vmId = sid; vmIdx = idx;
+  const p = s.photos[idx];
+  document.getElementById('view-title').textContent = (PT[p.type]||'Фото') + ' — ' + (s.name || 'Фабрика');
+  document.getElementById('view-img').src = p.data || '';
+  document.getElementById('view-modal').classList.add('open');
+}
+function delViewPhoto() {
+  if (vmId !== null && vmIdx !== null) { delPhoto(vmId, vmIdx); closeModal('view-modal'); vmId=null; vmIdx=null; }
+}
+
+/* ===== MODALS ===== */
+function closeModal(id) { document.getElementById(id).classList.remove('open'); if(id==='notes-modal') render(); }
+document.querySelectorAll('.modal-bg').forEach(el => el.addEventListener('click', function(e) { if(e.target===this) closeModal(this.id); }));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-bg.open').forEach(el => closeModal(el.id));
+  if (e.key === 'Enter' && (e.metaKey||e.ctrlKey) && document.activeElement === document.getElementById('log-ta')) addLog();
+});
+
+/* ===== DRIVE AUTH ===== */
+function getToken() {
+  const t = meta.driveToken, exp = meta.driveExpiry || 0;
+  return (t && Date.now() < exp - 60000) ? t : null;
+}
+function driveConnect() {
+  const cid = document.getElementById('cid-input').value.trim();
+  if (!cid) { toast('Введи Client ID'); return; }
+  meta.driveClientId = cid; lsSave();
+  const url = 'https://accounts.google.com/o/oauth2/auth?' + new URLSearchParams({
+    client_id: cid, redirect_uri: location.href.split('#')[0],
+    response_type: 'token', scope: SCOPE, prompt: 'select_account'
+  });
+  location.href = url;
+}
+function driveReconnect() {
+  const cid = meta.driveClientId;
+  if (!cid) { toast('Client ID не найден'); return; }
+  const url = 'https://accounts.google.com/o/oauth2/auth?' + new URLSearchParams({
+    client_id: cid, redirect_uri: location.href.split('#')[0],
+    response_type: 'token', scope: SCOPE, prompt: 'select_account'
+  });
+  location.href = url;
+}
+function checkOAuth() {
+  if (!location.hash.includes('access_token=')) return;
+  const p = new URLSearchParams(location.hash.substring(1));
+  const token = p.get('access_token'), exp = parseInt(p.get('expires_in') || '3600');
+  if (token) {
+    meta.driveToken = token; meta.driveExpiry = Date.now() + exp * 1000;
+    lsSave(); history.replaceState(null, '', location.pathname);
+    fetchEmail(token); updateDriveUI(); toast('✓ Google Drive подключён!');
+  }
+}
+async function fetchEmail(token) {
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {headers: {Authorization: 'Bearer ' + token}});
+    const d = await r.json();
+    if (d.email) { meta.driveEmail = d.email; lsSave(); updateDriveUI(); }
+  } catch(e) {}
+}
+function driveDisconnect() {
+  if (!confirm('Отключить Drive?')) return;
+  delete meta.driveToken; delete meta.driveExpiry; delete meta.driveEmail;
+  lsSave(); updateDriveUI(); toast('Drive отключён');
+}
+function updateDriveUI() {
+  const ok = !!getToken();
+  document.getElementById('drive-setup-block').style.display = ok ? 'none' : 'block';
+  document.getElementById('drive-connected-block').style.display = ok ? 'block' : 'none';
+  const pill = document.getElementById('drive-pill');
+  pill.className = 'drive-pill ' + (ok ? 'on' : 'off');
+  document.getElementById('drive-pill-text').textContent = ok ? (meta.driveEmail || 'Drive ✓') : 'Drive';
+  if (ok) document.getElementById('drive-email-txt').textContent = meta.driveEmail || '—';
+  if (meta.driveClientId) document.getElementById('cid-input').value = meta.driveClientId;
+  const si = document.getElementById('drive-sync-info');
+  if (meta.driveSync) {
+    si.textContent = '✓ Последняя синхронизация: ' + new Date(meta.driveSync).toLocaleString('ru');
+    si.style.display = 'block';
+  }
+}
+
+/* ===== DRIVE API ===== */
+async function dFetch(method, path, body) {
+  const t = getToken(); if(!t) throw new Error('no_token');
+  const r = await fetch('https://www.googleapis.com/drive/v3' + path + '?fields=id,name', {
+    method, headers: {Authorization: 'Bearer ' + t, ...(body ? {'Content-Type': 'application/json'} : {})},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!r.ok) throw new Error(r.status); return r.json();
+}
+async function dList(q) {
+  const t = getToken(); if(!t) throw new Error('no_token');
+  const r = await fetch('https://www.googleapis.com/drive/v3/files?' + new URLSearchParams({q, fields:'files(id,name)', spaces:'drive'}), {headers: {Authorization: 'Bearer ' + t}});
+  return (await r.json()).files || [];
+}
+async function findOrCreate(name, parentId) {
+  const safe = name.replace(/'/g, "\\'");
+  const q = `name='${safe}' and mimeType='application/vnd.google-apps.folder' and trashed=false` + (parentId ? ` and '${parentId}' in parents` : '');
+  const f = await dList(q); if(f.length) return f[0].id;
+  const b = {name, mimeType: 'application/vnd.google-apps.folder'}; if(parentId) b.parents = [parentId];
+  return (await dFetch('POST', '/files', b)).id;
+}
+async function findFile(name, parentId) {
+  const safe = name.replace(/'/g, "\\'");
+  const f = await dList(`name='${safe}' and '${parentId}' in parents and trashed=false`);
+  return f.length ? f[0].id : null;
+}
+async function uploadBlob(name, blob, parentId) {
+  const t = getToken();
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify({name, parents:[parentId]})], {type:'application/json'}));
+  form.append('file', blob);
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {method:'POST', headers:{Authorization:'Bearer '+t}, body:form});
+  if (!r.ok) throw new Error('upload ' + r.status);
+  return (await r.json()).id;
+}
+async function updateBlob(fileId, blob) {
+  const t = getToken();
+  const r = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {method:'PATCH', headers:{Authorization:'Bearer '+t, 'Content-Type':blob.type}, body:blob});
+  if (!r.ok) throw new Error('update ' + r.status);
+  return fileId;
+}
+async function upsert(name, blob, parentId, existingId) {
+  return existingId ? await updateBlob(existingId, blob) : await uploadBlob(name, blob, parentId);
+}
+
+/* ===== INFO.TXT ===== */
+function buildInfo(s, idx) {
+  const D = '━'.repeat(42);
+  let t = (s.name || `Фабрика ${idx}`) + '\n' + D + '\n';
+  t += `Стенд:     ${s.stand || '—'}\nКатегория: ${s.cat}\nСтатус:    ${SL[s.status]||s.status}\n`;
+  if (s.contact) t += `Контакт:   ${s.contact}\n`;
+  t += `Фото:      ${(s.photos||[]).length} шт.\n`;
+  if ((s.generalNotes||'').trim()) t += '\nЗАМЕТКИ\n' + D + '\n' + s.generalNotes.trim() + '\n';
+  const log = s.log || [];
+  if (log.length) { t += '\nЛОГ ПЕРЕГОВОРОВ\n' + D + '\n'; log.forEach(e => { t += fmt(e.ts) + '\n' + e.text + '\n\n'; }); }
+  t += D + '\nОбновлено: ' + new Date().toLocaleString('ru') + '\n';
+  return t;
+}
+
+/* ===== DRIVE SYNC + AUTO-CLEAR ===== */
+async function driveSync() {
+  const t = getToken();
+  if (!t) { toast('Токен истёк — нажми «Переподключить»'); return; }
+
+  const hasData = sup.some(s => s.name || s.generalNotes || (s.log && s.log.length) || (s.photos && s.photos.length));
+  if (!hasData) { toast('Нечего синхронизировать — введи данные фабрик'); return; }
+
+  const btn = document.getElementById('btn-sync');
+  btn.disabled = true; btn.textContent = 'Синхронизация…';
+
+  try {
+    setProgress('Создаю папку Canton Fair 2026…', 5);
+    const rootId = await findOrCreate(ROOT, null);
+
+    for (let i = 0; i < sup.length; i++) {
+      const s = sup[i];
+      if (!s.name && !s.generalNotes && !(s.log && s.log.length) && !(s.photos && s.photos.length)) continue;
+
+      setProgress(`[${i+1}/2] ${s.name || 'Фабрика '+(i+1)}…`, 15 + i * 35);
+
+      // Canton Fair 2026 / [Категория] / [Компания]
+      const catName = (s.cat || 'Другое').replace(/[\/\\:*?"<>|]/g, '_');
+      const catFolderId = await findOrCreate(catName, rootId);
+      const fn = (s.name || `Фабрика_${i+1}`).replace(/[\/\\:*?"<>|]/g, '_');
+      const folderId = await findOrCreate(fn, catFolderId);
+
+      // Upload photos
+      for (const p of (s.photos || [])) {
+        if (!p.driveId && p.data) {
+          const bin = atob(p.data.split(',')[1]);
+          const bytes = new Uint8Array(bin.length);
+          for (let j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
+          const blob = new Blob([bytes], {type:'image/jpeg'});
+          const fname = `${PT[p.type]||'фото'}_${Date.now()%100000}.jpg`;
+          p.driveId = await uploadBlob(fname, blob, folderId);
+        }
+      }
+
+      // Save info.txt
+      const infoBlob = new Blob([buildInfo(s, i+1)], {type:'text/plain'});
+      const existInfo = await findFile('info.txt', folderId);
+      await upsert('info.txt', infoBlob, folderId, existInfo || null);
+    }
+
+    // Save _data.json (references only, no base64)
+    setProgress('Сохраняю резервную копию…', 88);
+    const payload = {
+      suppliers: sup.map(s => ({...s, photos: (s.photos||[]).map(p => ({type:p.type, driveId:p.driveId}))})),
+      savedAt: new Date().toISOString()
+    };
+    const jsonBlob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const existJson = await findFile('_data.json', rootId);
+    await upsert('_data.json', jsonBlob, rootId, existJson || null);
+
+    setProgress('Готово!', 100);
+    meta.driveSync = Date.now(); lsSave();
+
+    // ✅ AUTO-CLEAR: wipe both factory slots
+    sup = [emptyFactory(1), emptyFactory(2)];
+    lsSave();
+
+    setTimeout(() => setProgress('', 0, false), 1500);
+    updateDriveUI(); render();
+    toast('✓ Синхронизировано! Приложение очищено.', 3500);
+
+  } catch(e) {
+    setProgress('', 0, false); console.error(e);
+    if (e.message === 'no_token') { toast('Токен истёк — нажми «Переподключить»'); }
+    else toast('Ошибка: ' + e.message);
+  }
+
+  btn.disabled = false; btn.textContent = '☁ Синхронизировать';
+}
+
+/* ===== INIT ===== */
+checkOAuth();
+updateDriveUI();
+render();
+</script>
+</body>
+</html>
