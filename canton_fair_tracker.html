@@ -400,7 +400,12 @@ function render() {
         <div class="field-row">
           <input type="text" placeholder="Стенд (11.1-A22)" value="${esc(s.stand)}" oninput="sf(${s.id},'stand',this.value)"/>
           <select id="cat-sel-${s.id}" onchange="sf(${s.id},'cat',this.value)">${catOpts}</select>
-          <button class="icon-btn" onclick="addCat(${s.id})" title="Добавить категорию" style="flex-shrink:0;padding:0 10px;font-size:16px">＋</button>
+          <button class="icon-btn" onclick="toggleNewCat(${s.id})" title="Добавить категорию" style="flex-shrink:0;padding:0 10px;font-size:16px">＋</button>
+        </div>
+        <div id="new-cat-row-${s.id}" style="display:none" class="field-row">
+          <input type="text" id="new-cat-inp-${s.id}" placeholder="Название новой категории…" onkeydown="if(event.key==='Enter')saveNewCat(${s.id});if(event.key==='Escape')toggleNewCat(${s.id})" style="flex:1"/>
+          <button class="btn btn-teal" onclick="saveNewCat(${s.id})" style="font-size:12px;padding:6px 12px">Добавить</button>
+          <button class="icon-btn" onclick="toggleNewCat(${s.id})" style="flex-shrink:0">✕</button>
         </div>
         <div class="field-row">
           <input type="text" placeholder="WeChat / WhatsApp / Email" value="${esc(s.contact)}" oninput="sf(${s.id},'contact',this.value)"/>
@@ -421,13 +426,20 @@ function cycleStatus(id) {
   s.status = SC[(SC.indexOf(s.status)+1) % SC.length];
   lsSave(); render(); toast('Статус → ' + SL[s.status]);
 }
-function addCat(factoryId) {
-  const name = prompt('Название новой категории:');
-  if (!name || !name.trim()) return;
-  const trimmed = name.trim();
-  if (cats.includes(trimmed)) { toast('Такая категория уже есть'); return; }
+function toggleNewCat(factoryId) {
+  const row = document.getElementById('new-cat-row-' + factoryId);
+  const inp = document.getElementById('new-cat-inp-' + factoryId);
+  const visible = row.style.display !== 'none';
+  row.style.display = visible ? 'none' : 'flex';
+  if (!visible) setTimeout(() => inp && inp.focus(), 50);
+}
+function saveNewCat(factoryId) {
+  const inp = document.getElementById('new-cat-inp-' + factoryId);
+  if (!inp) return;
+  const trimmed = inp.value.trim();
+  if (!trimmed) { inp.focus(); return; }
+  if (cats.includes(trimmed)) { toast('Такая категория уже есть'); inp.focus(); return; }
   cats.push(trimmed);
-  // Assign to this factory
   const s = sup.find(x => x.id===factoryId);
   if (s) s.cat = trimmed;
   lsSave(); render(); toast('✓ Категория добавлена: ' + trimmed);
