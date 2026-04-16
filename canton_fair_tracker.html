@@ -690,8 +690,7 @@ async function driveSync() {
   const t = getToken();
   if (!t) { toast('Токен истёк — нажми «Переподключить»'); return; }
 
-  const hasData = sup.some(s => s.name || s.generalNotes || (s.log && s.log.length) || (s.photos && s.photos.length));
-  if (!hasData) { toast('Нечего синхронизировать — введи данные фабрик'); return; }
+  // Always allow sync to update categories on Drive even if no companies entered
 
   const btn = document.getElementById('btn-sync');
   btn.disabled = true; btn.textContent = 'Синхронизация…';
@@ -776,7 +775,12 @@ async function driveSync() {
 
     setTimeout(() => setProgress('', 0, false), 1500);
     updateDriveUI(); render();
-    toast('✓ Синхронизировано! Приложение очищено.', 3500);
+    const syncedCount = sup.filter(s => s.name).length;
+    if (syncedCount > 0) {
+      toast('✓ Синхронизировано ' + syncedCount + ' компаний. Приложение очищено.', 3500);
+    } else {
+      toast('✓ Категории сохранены на Drive.', 3000);
+    }
 
   } catch(e) {
     setProgress('', 0, false); console.error(e);
