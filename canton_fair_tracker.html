@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0063)file:///Users/artemislamov/Downloads/canton_fair_tracker_3.html -->
-<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Canton Fair 2026</title>
 <style>
@@ -188,66 +188,28 @@ main{max-width:720px;margin:0 auto;padding:20px 14px 100px}
 </header>
 
 <main>
-  <div class="factories" id="factories"><div class="factory-card s-new">
-      <div class="factory-header">
-        <span class="factory-label">Фабрика 1</span>
-        <span class="badge b-new" onclick="cycleStatus(1)">Новый</span>
-      </div>
-      <div class="factory-fields">
-        <input class="fname" type="text" placeholder="Название компании" value="" oninput="sf(1,&#39;name&#39;,this.value)">
-        <div class="field-row">
-          <input type="text" placeholder="Стенд (11.1-A22)" value="" oninput="sf(1,&#39;stand&#39;,this.value)">
-          <select onchange="sf(1,&#39;cat&#39;,this.value)"><option value="Jump starter">Jump starter</option><option value="Компрессор">Компрессор</option><option value="LED освещение">LED освещение</option><option value="Power tools">Power tools</option><option value="Мойка высокого давления">Мойка высокого давления</option><option value="Другое" selected="">Другое</option></select>
-        </div>
-        <div class="field-row">
-          <input type="text" placeholder="WeChat / WhatsApp / Email" value="" oninput="sf(1,&#39;contact&#39;,this.value)">
-        </div>
-      </div>
-      <div class="factory-actions">
-        <button class="icon-btn" onclick="openNotes(1)">📝 Заметки</button>
-      </div>
-      <div class="photos-row"><button class="add-photo-btn" onclick="openPhoto(1)"><span style="font-size:20px">📷</span><span>Фото</span></button></div>
-    </div><div class="factory-card s-new">
-      <div class="factory-header">
-        <span class="factory-label">Фабрика 2</span>
-        <span class="badge b-new" onclick="cycleStatus(2)">Новый</span>
-      </div>
-      <div class="factory-fields">
-        <input class="fname" type="text" placeholder="Название компании" value="" oninput="sf(2,&#39;name&#39;,this.value)">
-        <div class="field-row">
-          <input type="text" placeholder="Стенд (11.1-A22)" value="" oninput="sf(2,&#39;stand&#39;,this.value)">
-          <select onchange="sf(2,&#39;cat&#39;,this.value)"><option value="Jump starter">Jump starter</option><option value="Компрессор">Компрессор</option><option value="LED освещение">LED освещение</option><option value="Power tools">Power tools</option><option value="Мойка высокого давления">Мойка высокого давления</option><option value="Другое" selected="">Другое</option></select>
-        </div>
-        <div class="field-row">
-          <input type="text" placeholder="WeChat / WhatsApp / Email" value="" oninput="sf(2,&#39;contact&#39;,this.value)">
-        </div>
-      </div>
-      <div class="factory-actions">
-        <button class="icon-btn" onclick="openNotes(2)">📝 Заметки</button>
-      </div>
-      <div class="photos-row"><button class="add-photo-btn" onclick="openPhoto(2)"><span style="font-size:20px">📷</span><span>Фото</span></button></div>
-    </div></div>
+  <div class="factories" id="factories"></div>
 
   <!-- DRIVE PANEL -->
   <div class="drive-panel">
     <div class="panel-title">Google Drive — синхронизация</div>
 
     <!-- NOT CONNECTED -->
-    <div id="drive-setup-block" style="display: block;">
+    <div id="drive-setup-block">
       <p style="font-size:12px;color:var(--text2);margin-bottom:12px">
         Настрой один раз. После синхронизации данные <strong>автоматически сотрутся</strong> из приложения — и ты можешь вводить следующую фабрику.
       </p>
       <div class="drive-steps">
-        <div class="drive-step">Открой <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a> → проект Canton Fair</div>
+        <div class="drive-step">Открой <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → проект Canton Fair</div>
         <div class="drive-step">APIs &amp; Services → Credentials → OAuth 2.0 Client ID</div>
         <div class="drive-step">
-          Authorized JavaScript origins: <code id="origin-hint">file://</code><br>
-          Redirect URI: <code id="redirect-hint">file:///Users/artemislamov/Downloads/canton_fair_tracker_3.html</code>
+          Authorized JavaScript origins: <code id="origin-hint"></code><br>
+          Redirect URI: <code id="redirect-hint"></code>
         </div>
         <div class="drive-step">Вставь Client ID ниже и нажми «Подключить»</div>
       </div>
       <div class="cid-row">
-        <input type="text" id="cid-input" placeholder="Client ID (xxxx.apps.googleusercontent.com)">
+        <input type="text" id="cid-input" placeholder="Client ID (xxxx.apps.googleusercontent.com)"/>
         <button class="btn btn-teal" onclick="driveConnect()">Подключить →</button>
       </div>
     </div>
@@ -278,22 +240,17 @@ main{max-width:720px;margin:0 auto;padding:20px 14px 100px}
   <div class="modal">
     <div class="modal-head">
       <h3 id="notes-title">Заметки</h3>
-      <button class="modal-close" onclick="closeModal(&#39;notes-modal&#39;)">×</button>
+      <button class="modal-close" onclick="closeModal('notes-modal')">×</button>
     </div>
     <div class="ntabs">
-      <button class="ntab active" id="ntab-g" onclick="switchTab(&#39;g&#39;)">📝 Общие заметки</button>
-      <button class="ntab" id="ntab-l" onclick="switchTab(&#39;l&#39;)">🗂 Лог переговоров</button>
+      <button class="ntab active" id="ntab-g" onclick="switchTab('g')">📝 Общие заметки</button>
+      <button class="ntab" id="ntab-l" onclick="switchTab('l')">🗂 Лог переговоров</button>
     </div>
     <div class="modal-body">
       <div class="ntab-pane active" id="npane-g">
         <div class="notes-area">
-          <textarea id="gen-ta" placeholder="MOQ, цены FOB, условия, впечатления…
-
-Пример:
-MOQ — 200 шт. FOB $12.50 при 500+
-Упаковка: кастом +$0.30/шт · Срок: 35 дней
-Сертификаты: CE, RoHS"></textarea>
-          <span class="hint">Сохраняется автоматически</span>
+          <textarea id="gen-ta" placeholder="MOQ, цены FOB, условия, впечатления…&#10;&#10;Пример:&#10;MOQ — 200 шт. FOB $12.50 при 500+&#10;Упаковка: кастом +$0.30/шт · Срок: 35 дней&#10;Сертификаты: CE, RoHS"></textarea>
+          <span class="hint" id="save-hint" style="transition:opacity .4s">Сохраняется автоматически</span>
         </div>
       </div>
       <div class="ntab-pane" id="npane-l">
@@ -302,11 +259,11 @@ MOQ — 200 шт. FOB $12.50 при 500+
           <textarea id="log-ta" placeholder="Запись о переговорах… (Cmd+Enter — добавить)"></textarea>
           <div class="log-add-row">
             <div class="quick-btns">
-              <button class="qbtn" onclick="qlog(&#39;Запросили образцы&#39;)">+ Образцы</button>
-              <button class="qbtn" onclick="qlog(&#39;Обсудили MOQ и цену&#39;)">+ MOQ/цена</button>
-              <button class="qbtn" onclick="qlog(&#39;Обменялись WeChat&#39;)">+ WeChat</button>
-              <button class="qbtn" onclick="qlog(&#39;Взяли каталог и прайс&#39;)">+ Каталог</button>
-              <button class="qbtn" onclick="qlog(&#39;Договорились о перезвоне&#39;)">+ Перезвон</button>
+              <button class="qbtn" onclick="qlog('Запросили образцы')">+ Образцы</button>
+              <button class="qbtn" onclick="qlog('Обсудили MOQ и цену')">+ MOQ/цена</button>
+              <button class="qbtn" onclick="qlog('Обменялись WeChat')">+ WeChat</button>
+              <button class="qbtn" onclick="qlog('Взяли каталог и прайс')">+ Каталог</button>
+              <button class="qbtn" onclick="qlog('Договорились о перезвоне')">+ Перезвон</button>
             </div>
             <button class="btn btn-primary" onclick="addLog()">Добавить</button>
           </div>
@@ -321,22 +278,22 @@ MOQ — 200 шт. FOB $12.50 при 500+
   <div class="modal" style="width:440px">
     <div class="modal-head">
       <h3 id="photo-title">Добавить фото</h3>
-      <button class="modal-close" onclick="closeModal(&#39;photo-modal&#39;)">×</button>
+      <button class="modal-close" onclick="closeModal('photo-modal')">×</button>
     </div>
     <div class="modal-body" style="padding:14px 16px">
       <div class="pt-row">
-        <button class="pt-btn active" id="pt-card" onclick="setPT(&#39;card&#39;)">📇 Визитка</button>
-        <button class="pt-btn" id="pt-product" onclick="setPT(&#39;product&#39;)">📦 Товар</button>
-        <button class="pt-btn" id="pt-other" onclick="setPT(&#39;other&#39;)">🖼 Другое</button>
+        <button class="pt-btn active" id="pt-card" onclick="setPT('card')">📇 Визитка</button>
+        <button class="pt-btn" id="pt-product" onclick="setPT('product')">📦 Товар</button>
+        <button class="pt-btn" id="pt-other" onclick="setPT('other')">🖼 Другое</button>
       </div>
       <label class="upload-zone">
-        <input type="file" accept="image/*" id="file-inp" onchange="handleFile(event)">
+        <input type="file" accept="image/*" id="file-inp" onchange="handleFile(event)"/>
         <div style="font-size:30px;margin-bottom:8px">📷</div>
         <div style="font-size:13px;font-weight:500">Нажми для выбора фото</div>
         <div style="font-size:12px;color:var(--text3);margin-top:4px">С камеры или из галереи · JPEG, PNG</div>
       </label>
     </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal(&#39;photo-modal&#39;)">Закрыть</button></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('photo-modal')">Закрыть</button></div>
   </div>
 </div>
 
@@ -345,14 +302,14 @@ MOQ — 200 шт. FOB $12.50 при 500+
   <div class="modal">
     <div class="modal-head">
       <h3 id="view-title">Фото</h3>
-      <button class="modal-close" onclick="closeModal(&#39;view-modal&#39;)">×</button>
+      <button class="modal-close" onclick="closeModal('view-modal')">×</button>
     </div>
     <div class="modal-body" style="padding:14px 16px;text-align:center">
-      <img id="view-img" class="modal-img" src="file:///Users/artemislamov/Downloads/canton_fair_tracker_3.html" alt="фото">
+      <img id="view-img" class="modal-img" src="" alt="фото"/>
     </div>
     <div class="modal-foot">
       <button class="btn btn-danger" onclick="delViewPhoto()">Удалить фото</button>
-      <button class="btn" onclick="closeModal(&#39;view-modal&#39;)">Закрыть</button>
+      <button class="btn" onclick="closeModal('view-modal')">Закрыть</button>
     </div>
   </div>
 </div>
@@ -361,11 +318,11 @@ MOQ — 200 шт. FOB $12.50 при 500+
 
 <script>
 /* ===== CONSTANTS ===== */
-const SK = 'cf_v10', MK = 'cf_meta_v10';
+const SK = 'cf_v10', MK = 'cf_meta_v10', CK = 'cf_cats_v10';
 const SL = {hot:'Интересно', sample:'Образцы', new:'Новый', pass:'Пропуск'};
 const SC = ['new','hot','sample','pass'];
 const PT = {card:'Визитка', product:'Товар', other:'Фото'};
-const CATS = ['Jump starter','Компрессор','LED освещение','Power tools','Мойка высокого давления','Другое'];
+const DEF_CATS = ['Jump starter','Компрессор','LED освещение','Power tools','Мойка высокого давления','Другое'];
 const ROOT = 'Canton Fair 2026';
 const SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 
@@ -378,6 +335,7 @@ function ls(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.par
 function lsSave() {
   try {
     localStorage.setItem(SK, JSON.stringify(sup));
+    localStorage.setItem(CK, JSON.stringify(cats));
     localStorage.setItem(MK, JSON.stringify(meta));
   } catch(e) {
     if (e.name === 'QuotaExceededError') toast('⚠ Память браузера заполнена — синхронизируй с Drive');
@@ -389,6 +347,7 @@ let sup = ls(SK, [emptyFactory(1), emptyFactory(2)]);
 while (sup.length < 2) sup.push(emptyFactory(sup.length + 1));
 sup = sup.slice(0, 2);
 
+let cats = ls(CK, [...DEF_CATS]);
 let meta = ls(MK, {});
 let pmId = null, ptType = 'card', vmId = null, vmIdx = null, nmId = null;
 
@@ -419,7 +378,7 @@ function render() {
   document.getElementById('factories').innerHTML = sup.map((s, idx) => {
     const ph = s.photos || [], log = s.log || [], gn = s.generalNotes || '';
     const nc = (gn.trim() ? 1 : 0) + log.length;
-    const catOpts = CATS.map(c => `<option value="${esc(c)}"${s.cat===c?' selected':''}>${esc(c)}</option>`).join('');
+    const catOpts = cats.map(c => `<option value="${esc(c)}"${s.cat===c?' selected':''}>${esc(c)}</option>`).join('');
     const phHtml = ph.map((p, i) => {
       if (!p.data && p.driveId)
         return `<div class="drive-cloud"><span style="font-size:20px">☁</span><span style="font-size:9px;color:var(--text3)">На Drive</span></div>`;
@@ -440,7 +399,8 @@ function render() {
         <input class="fname" type="text" placeholder="Название компании" value="${esc(s.name)}" oninput="sf(${s.id},'name',this.value)"/>
         <div class="field-row">
           <input type="text" placeholder="Стенд (11.1-A22)" value="${esc(s.stand)}" oninput="sf(${s.id},'stand',this.value)"/>
-          <select onchange="sf(${s.id},'cat',this.value)">${catOpts}</select>
+          <select id="cat-sel-${s.id}" onchange="sf(${s.id},'cat',this.value)">${catOpts}</select>
+          <button class="icon-btn" onclick="addCat(${s.id})" title="Добавить категорию" style="flex-shrink:0;padding:0 10px;font-size:16px">＋</button>
         </div>
         <div class="field-row">
           <input type="text" placeholder="WeChat / WhatsApp / Email" value="${esc(s.contact)}" oninput="sf(${s.id},'contact',this.value)"/>
@@ -461,6 +421,17 @@ function cycleStatus(id) {
   s.status = SC[(SC.indexOf(s.status)+1) % SC.length];
   lsSave(); render(); toast('Статус → ' + SL[s.status]);
 }
+function addCat(factoryId) {
+  const name = prompt('Название новой категории:');
+  if (!name || !name.trim()) return;
+  const trimmed = name.trim();
+  if (cats.includes(trimmed)) { toast('Такая категория уже есть'); return; }
+  cats.push(trimmed);
+  // Assign to this factory
+  const s = sup.find(x => x.id===factoryId);
+  if (s) s.cat = trimmed;
+  lsSave(); render(); toast('✓ Категория добавлена: ' + trimmed);
+}
 
 /* ===== NOTES ===== */
 function openNotes(id) {
@@ -480,7 +451,18 @@ function switchTab(t) {
   if (t === 'l') renderLog();
 }
 document.getElementById('gen-ta').addEventListener('input', function() {
-  const s = sup.find(x => x.id===nmId); if(s) { s.generalNotes = this.value; lsSave(); }
+  const s = sup.find(x => x.id===nmId); if(!s) return;
+  s.generalNotes = this.value; lsSave();
+  const hint = document.getElementById('save-hint');
+  hint.textContent = 'Сохранено ✓';
+  hint.style.color = 'var(--teal-tx)';
+  hint.style.opacity = '1';
+  clearTimeout(hint._t);
+  hint._t = setTimeout(() => {
+    hint.textContent = 'Сохраняется автоматически';
+    hint.style.color = '';
+    hint.style.opacity = '.4';
+  }, 1500);
 });
 function renderLog() {
   const s = nmId !== null ? sup.find(x => x.id===nmId) : null;
@@ -776,6 +758,5 @@ checkOAuth();
 updateDriveUI();
 render();
 </script>
-
-
-</body></html>
+</body>
+</html>
