@@ -242,6 +242,24 @@ main{max-width:720px;margin:0 auto;padding:20px 14px 100px}
   </div>
 </main>
 
+
+<!-- CATEGORIES MODAL -->
+<div class="modal-bg" id="cats-modal">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <h3>Управление категориями</h3>
+      <button class="modal-close" onclick="closeModal('cats-modal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:14px 16px;display:flex;flex-direction:column;gap:8px;overflow-y:auto">
+      <p style="font-size:12px;color:var(--text2)">Нажми на название чтобы переименовать · × чтобы удалить</p>
+      <div id="cats-list-modal" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary" onclick="closeModal('cats-modal');render()">Готово</button>
+    </div>
+  </div>
+</div>
+
 <!-- NOTES MODAL -->
 <div class="modal-bg" id="notes-modal">
   <div class="modal">
@@ -791,6 +809,50 @@ async function driveSync() {
   btn.disabled = false; btn.textContent = '☁ Синхронизировать';
 }
 
+
+
+/* ===== CATEGORIES MANAGEMENT ===== */
+function openCatsModal() {
+  renderCatsModal();
+  document.getElementById('cats-modal').classList.add('open');
+}
+function renderCatsModal() {
+  const list = document.getElementById('cats-list-modal');
+  list.innerHTML = cats.map((cat, i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border-radius:var(--rs)">
+      <input 
+        value="${esc(cat)}" 
+        onchange="renameCat(${i}, this.value)"
+        style="flex:1;border:1px solid var(--border2);border-radius:var(--rs);padding:5px 8px;background:var(--bg);color:var(--text);font-size:13px;font-family:inherit"
+      />
+      <button onclick="deleteCat(${i})" style="background:var(--red-bg);color:var(--red-tx);border:none;border-radius:var(--rs);width:28px;height:28px;cursor:pointer;font-size:15px;flex-shrink:0">×</button>
+    </div>
+  `).join('');
+}
+function deleteCat(i) {
+  const name = cats[i];
+  // If used by a factory, reassign to 'Другое'
+  sup.forEach(s => { if (s.cat === name) s.cat = 'Другое'; });
+  cats.splice(i, 1);
+  // Ensure 'Другое' always exists
+  if (!cats.includes('Другое')) cats.push('Другое');
+  lsSave();
+  renderCatsModal();
+  render();
+  toast('Категория удалена: ' + name);
+}
+function renameCat(i, newName) {
+  const trimmed = newName.trim();
+  if (!trimmed) { renderCatsModal(); return; }
+  if (cats.includes(trimmed) && cats[i] !== trimmed) { toast('Такая категория уже есть'); renderCatsModal(); return; }
+  const oldName = cats[i];
+  // Update factories using this category
+  sup.forEach(s => { if (s.cat === oldName) s.cat = trimmed; });
+  cats[i] = trimmed;
+  lsSave();
+  render();
+  toast('Переименовано: ' + oldName + ' → ' + trimmed);
+}
 
 /* ===== BANNER ===== */
 function showBanner(type, msg, btnLabel, btnFn) {
